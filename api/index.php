@@ -1,6 +1,14 @@
-"/api/v1/login"
+<?php
+use API\TableGateways\UserGateway;
+require('./db/bootstrap.php');
+require('./tableGateways/UserGateway.php');
 
-"/api/v1/signup"
-//TODO
-"/api/v1/users/:id"
-"/api/v1/users.php?id="
+$userGateway = new UserGateway($dbConnection);
+// $input = Array("email" => "kadeksuryam@gmail.com", "username" => "kadeksuryam",
+// "password" => "kadeksuryam");
+
+// print_r($userGateway->insert($input));
+// print_r($userGateway->findAll());
+// $updateIn = Array("email" => "kadeksuryam@gmail.com", "username" => "suryam");
+// print_r($userGateway->update(2, $updateIn));
+// print_r($userGateway->delete(2));
