@@ -66,6 +66,7 @@ $stmtCreateUserSessionsTable = <<<EOS
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         user_id INTEGER NOT NULL,
         session_id TEXT NOT NULL,
+        is_admin INTEGER NOT NULL,
         created_at DATETIME,
         updated_at DATETIME,
         FOREIGN KEY(user_id) REFERENCES users(id)

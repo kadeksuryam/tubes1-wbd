@@ -50,7 +50,7 @@ class UserController {
 
     private function getUser($id)
     {
-        $result = $this->userGateway->findAll($id);
+        $result = $this->userGateway->find($id);
         $response["status_code_header"] = "HTTP/1.1 200 OK";
         $response["body"] = json_encode($result);
         return $response;

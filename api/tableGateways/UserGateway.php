@@ -40,6 +40,22 @@ class UserGateway {
         }
     }
 
+    public function findByEmail($email)
+    {
+        $stmt = <<<EOS
+            SELECT * FROM users WHERE email = :email;
+        EOS;
+
+        try {
+            $stmt = $this->dbCon->prepare($stmt);
+            $stmt->execute(array("email" => $email));
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $result;
+        } catch(\PDOException $e) {
+            exit($e->getMessage());
+        }
+    }
+
     public function insert(Array $input)
     {
         $stmt = <<<EOS
