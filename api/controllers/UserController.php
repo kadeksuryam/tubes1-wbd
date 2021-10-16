@@ -2,22 +2,23 @@
 namespace API\Controllers;
 
 use API\TableGateways\UserGateway;
-require("../tableGateways/UserGateway.php");
+use Controller;
 
-class UserController {
-    private $dbCon;
+require("../tableGateways/UserGateway.php");
+require("Controller.php");
+
+class UserController implements Controller {
     private $requestMethod;
     private $userId;
 
     private $userGateway;
 
-    public function __construct($dbCon, $requestMethod, $userId)
+    public function __construct($userId)
     {
-        $this->dbCon = $dbCon;
-        $this->requestMethod = $requestMethod;
+        $this->requestMethod = $_SERVER["REQUEST_METHOD"];
         $this->userId = $userId;
 
-        $this->userGateway = new UserGateway($dbCon);
+        $this->userGateway = new UserGateway();
     }
 
     public function processRequest()
@@ -53,15 +54,6 @@ class UserController {
         $result = $this->userGateway->find($id);
         $response["status_code_header"] = "HTTP/1.1 200 OK";
         $response["body"] = json_encode($result);
-        return $response;
-    }
-
-    private function unprocessableEntityResponse()
-    {
-        $response["status_code_header"] = "HTTP/1.1 422 Unprocessable Entity";
-        $response["body"] = json_encode([
-            "error" => "Invalid request"
-        ]);
         return $response;
     }
 

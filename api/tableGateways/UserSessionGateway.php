@@ -1,12 +1,14 @@
 <?php
 namespace API\TableGateways;
+use API\DB\Database;
+require_once("../db/Database.php");
 
 class UserSessionGateway {
     private $dbCon = null;
     
-    public function __construct($dbCon)
+    public function __construct()
     {
-        $this->dbCon = $dbCon;
+        $this->dbCon = Database::getInstance()->getDbConnection();
     }
 
     public function findAll()

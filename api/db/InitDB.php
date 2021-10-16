@@ -12,8 +12,8 @@ EOS;
 $stmtCreateUsersTable = <<<EOS
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        email VARCHAR(256) UNIQUE NOT NULL,
-        username VARCHAR(256) NOT NULL,
+        email VARCHAR(256) NOT NULL,
+        username VARCHAR(256) UNIQUE NOT NULL,
         password VARCHAR(256) NOT NULL,
         is_admin INTEGER NOT NULL DEFAULT 0,
         created_at DATETIME,

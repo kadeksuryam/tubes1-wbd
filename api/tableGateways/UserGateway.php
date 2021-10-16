@@ -1,12 +1,15 @@
 <?php
 namespace API\TableGateways;
 
+use API\DB\Database;
+require_once("../db/Database.php");
+
 class UserGateway {
     private $dbCon = null;
-    
-    public function __construct($dbCon)
+
+    public function __construct()
     {
-        $this->dbCon = $dbCon;
+        $this->dbCon = Database::getInstance()->getDbConnection();
     }
 
     public function findAll()
@@ -49,6 +52,22 @@ class UserGateway {
         try {
             $stmt = $this->dbCon->prepare($stmt);
             $stmt->execute(array("email" => $email));
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return $result;
+        } catch(\PDOException $e) {
+            exit($e->getMessage());
+        }
+    }
+
+    public function findByUsername($username)
+    {
+        $stmt = <<<EOS
+            SELECT * FROM users WHERE username = :username;
+        EOS;
+
+        try {
+            $stmt = $this->dbCon->prepare($stmt);
+            $stmt->execute(array("username" => $username));
             $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
         } catch(\PDOException $e) {
