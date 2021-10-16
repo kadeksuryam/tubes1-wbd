@@ -3,10 +3,12 @@ namespace API\DB;
 require "./bootstrap.php";
 
 $stmtDropAllTables = <<<EOS
+    PRAGMA foreign_keys = OFF;
     DROP TABLE IF EXISTS users;
     DROP TABLE IF EXISTS dorayakis;
     DROP TABLE IF EXISTS user_sessions;
     DROP TABLE IF EXISTS dorayaki_activities;
+    PRAGMA foreign_keys = ON;
 EOS;
 
 $stmtCreateUsersTable = <<<EOS
@@ -137,6 +139,7 @@ try {
     ));
     
     echo "Success Initialization of DB!";
-} catch(\PDOException $e) {
+} catch(\Exception $e) {
+    echo "test";
     exit($e->getMessage());
 }

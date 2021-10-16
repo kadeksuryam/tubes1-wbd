@@ -1,18 +1,20 @@
 <?php
 
+use API\DB\Database;
 use API\TableGateways\UserGateway;
 use API\TableGateways\UserSessionGateway;
 
 require_once("Controller.php");
 require_once("../utils/validationUtil.php");
-
+require_once("../db/Database.php");
 class RegisterController implements Controller {
     private $userGateway;
     private $userSessionGateway;
     private $requestMethod;
     private $requestParam;
     private $requestBody;
-    
+    private $dbConnection;
+
     public function __construct()
     {
         $this->userGateway = new UserGateway();
@@ -20,59 +22,78 @@ class RegisterController implements Controller {
         $this->requestMethod = $_SERVER["REQUEST_METHOD"];
         $this->requestParam = $_GET;
         $this->requestBody = $_POST;
+        $this->dbConnection = Database::getInstance()->getDbConnection();
     }
 
     public function processRequest()
-    {
-        if($this->requestMethod != 'POST') {
-            $response["status_code_header"] = "HTTP/1.1 404 Not Found";
-            $response["body"] = ["message" => "Method not found"];
-            header($response["status_code_header"]);
-            echo json_encode($response["body"]);
+    {   
+        try{
+            if($this->requestMethod != 'POST') {
+                $response["status_code_header"] = "HTTP/1.1 404 Not Found";
+                $response["body"] = ["message" => "Method not found"];
+                header($response["status_code_header"]);
+                echo json_encode($response["body"]);
+                exit();
+            }
+
+            $validationErrorResponse = $this->validateRequest();
+            if(!empty($validationErrorResponse)) {
+                header("HTTP/1.1 400 Bad Request");
+                echo json_encode(["error" => $validationErrorResponse]);
+                exit();
+            }
+
+            if($this->requestParam["type"] == "validationOnly") {
+                $response["status_code_header"] = "HTTP/1.1 200 OK";
+                $response["body"] = ["message" => "All validation success"];
+                header($response["status_code_header"]);
+                echo json_encode($response["body"]);
+                exit();
+            }
+        }
+        catch(\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
             exit();
         }
 
-        $validationErrorResponse = $this->validateRequest();
-        if(!empty($validationErrorResponse)) {
-            header("HTTP/1.1 400 Bad Request");
-            echo json_encode($validationErrorResponse);
-            exit();
-        }
+        try{
+            // register business logic
+            $this->dbConnection->beginTransaction();
 
-        if($this->requestParam["type"] == "validationOnly") {
+            $reqUsername = $this->requestBody["username"];
+            $reqEmail = $this->requestBody["email"];
+            $reqPassword = $this->requestBody["password"];
+            $inputUser = ["username" => $reqUsername, 
+                "email" => $reqEmail, "password" => $reqPassword];
+
+            $this->userGateway->insert($inputUser);
+
+            $sessionId = uniqid();
+            $dbUser = $this->userGateway->findByUsername($reqUsername);
+            $dbUserId = $dbUser[0]["id"];
+            $dbIsAdmin = $dbUser[0]["is_admin"];
+            $inputSession = ["user_id" => $dbUserId, "session_id" => $sessionId, "is_admin" => $dbIsAdmin];
+
+            $this->userSessionGateway->insert($inputSession);
+
+            $this->dbConnection->commit();
+
+            setcookie("user_id", $inputSession["user_id"], time() + 86400, "/");
+            setcookie("session_id", $inputSession["session_id"], time() + 86400, "/");
+            setcookie("is_admin", $inputSession["is_admin"], time() + 86400, "/");
+
             $response["status_code_header"] = "HTTP/1.1 200 OK";
-            $response["body"] = ["message" => "All validation success"];
+            $response["body"] = ["message" => "successfully registered"];
+
             header($response["status_code_header"]);
             echo json_encode($response["body"]);
-            exit();
         }
-
-        $reqUsername = $this->requestBody["username"];
-        $reqEmail = $this->requestBody["email"];
-        $reqPassword = $this->requestBody["password"];
-        
-        $inputUser = ["username" => $reqUsername, 
-            "email" => $reqEmail, "password" => password_hash($reqPassword, PASSWORD_DEFAULT)];
-
-        $this->userGateway->insert($inputUser);
-        $sessionId = uniqid();
-        
-        $dbUser = $this->userGateway->findByUsername($reqUsername);
-        $dbUserId = $dbUser[0]["id"];
-        $dbIsAdmin = $dbUser[0]["is_admin"];
-
-        $inputSession = ["user_id" => $dbUserId, "session_id" => $sessionId, "is_admin" => $dbIsAdmin];
-        $this->userSessionGateway->insert($inputSession);
-
-        setcookie("user_id", $inputSession["user_id"], time() + 86400, "/");
-        setcookie("session_id", $inputSession["session_id"], time() + 86400, "/");
-        setcookie("is_admin", $inputSession["is_admin"], time() + 86400, "/");
-
-        $response["status_code_header"] = "HTTP/1.1 200 OK";
-        $response["body"] = ["message" => "successfully registered"];
-
-        header($response["status_code_header"]);
-        echo json_encode($response["body"]);
+        catch(\Exception $e) {
+            $this->dbConnection->rollBack();
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+        }
     }
 
     private function validateRequest() {

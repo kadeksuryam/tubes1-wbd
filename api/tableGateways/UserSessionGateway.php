@@ -17,14 +17,10 @@ class UserSessionGateway {
             SELECT * FROM user_sessions;
         EOS;
 
-        try {
-            $stmt = $this->dbCon->query($stmt);
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt = $this->dbCon->query($stmt);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            return $result;
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        return $result;
     }
 
     public function find($id)
@@ -33,14 +29,10 @@ class UserSessionGateway {
             SELECT * FROM user_sessions WHERE id = :id;
         EOS;
 
-        try {
-            $stmt = $this->dbCon->prepare($stmt);
-            $stmt->execute(array("id" => $id));
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->prepare($stmt);
+        $stmt->execute(array("id" => $id));
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $result;
     }
 
     public function findBySessionId($sessionId)
@@ -49,14 +41,10 @@ class UserSessionGateway {
             SELECT * FROM user_sessions WHERE session_id = :sessionId;
         EOS;
         
-        try {
-            $stmt = $this->dbCon->prepare($stmt);
-            $stmt->execute(array("sessionId" => $sessionId));
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->prepare($stmt);
+        $stmt->execute(array("sessionId" => $sessionId));
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $result;
     }
 
     public function insert(Array $input)
@@ -68,17 +56,13 @@ class UserSessionGateway {
                 (:user_id, :session_id, :is_admin)
         EOS;
 
-        try {
-            $stmt = $this->dbCon->prepare($stmt);
-            $stmt->execute(array(
-                "user_id" => $input["user_id"],
-                "session_id" => $input["session_id"],
-                "is_admin" => $input["is_admin"],
-            ));
-            return $stmt->rowCount();
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->prepare($stmt);
+        $stmt->execute(array(
+            "user_id" => $input["user_id"],
+            "session_id" => $input["session_id"],
+            "is_admin" => $input["is_admin"],
+        ));
+        return $stmt->rowCount();
     }
 
 }

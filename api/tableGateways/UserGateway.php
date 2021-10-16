@@ -18,13 +18,9 @@ class UserGateway {
             SELECT * FROM users;
         EOS;
 
-        try {
-            $stmt = $this->dbCon->query($stmt);
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->query($stmt);
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $result;
     }
 
     public function find($id)
@@ -33,14 +29,10 @@ class UserGateway {
             SELECT * FROM users WHERE id = :id;
         EOS;
 
-        try {
-            $stmt = $this->dbCon->prepare($stmt);
-            $stmt->execute(array("id" => $id));
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->prepare($stmt);
+        $stmt->execute(array("id" => $id));
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $result;
     }
 
     public function findByEmail($email)
@@ -49,14 +41,10 @@ class UserGateway {
             SELECT * FROM users WHERE email = :email;
         EOS;
 
-        try {
-            $stmt = $this->dbCon->prepare($stmt);
-            $stmt->execute(array("email" => $email));
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->prepare($stmt);
+        $stmt->execute(array("email" => $email));
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $result;
     }
 
     public function findByUsername($username)
@@ -65,14 +53,10 @@ class UserGateway {
             SELECT * FROM users WHERE username = :username;
         EOS;
 
-        try {
-            $stmt = $this->dbCon->prepare($stmt);
-            $stmt->execute(array("username" => $username));
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->prepare($stmt);
+        $stmt->execute(array("username" => $username));
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $result;
     }
 
     public function insert(Array $input)
@@ -84,18 +68,14 @@ class UserGateway {
                 (:email, :username, :password, :is_admin)
         EOS;
 
-        try {
-            $stmt = $this->dbCon->prepare($stmt);
-            $stmt->execute(array(
-                "email" => $input["email"],
-                "username" => $input["username"],
-                "password" => password_hash($input["password"], PASSWORD_DEFAULT),
-                "is_admin" => 0
-            ));
-            return $stmt->rowCount();
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->prepare($stmt);
+        $stmt->execute(array(
+            "email" => $input["email"],
+            "username" => $input["username"],
+            "password" => password_hash($input["password"], PASSWORD_DEFAULT),
+            "is_admin" => 0
+        ));
+        return $stmt->rowCount();
     }
 
     public function update($id, Array $input)
@@ -108,17 +88,13 @@ class UserGateway {
             WHERE id = :id;
         EOS;
 
-        try {
-            $stmt = $this->dbCon->prepare($stmt);
-            $stmt->execute(array(
-                "id" => (int)$id,
-                "email" => $input["email"],
-                "username" => $input["username"],
-            ));
-            return $stmt->rowCount();
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->prepare($stmt);
+        $stmt->execute(array(
+            "id" => (int)$id,
+            "email" => $input["email"],
+            "username" => $input["username"],
+        ));
+        return $stmt->rowCount();
     }
 
     public function delete($id)
@@ -128,14 +104,10 @@ class UserGateway {
             WHERE id = :id;
         EOS;
 
-        try {
-            $stmt = $this->dbCon->prepare($stmt);
-            $stmt->execute(array("id" => (int)$id));
-            
-            return $stmt->rowCount();
-        } catch(\PDOException $e) {
-            exit($e->getMessage());
-        }
+        $stmt = $this->dbCon->prepare($stmt);
+        $stmt->execute(array("id" => (int)$id));
+        
+        return $stmt->rowCount();
         
     }
 }

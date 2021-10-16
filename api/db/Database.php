@@ -23,6 +23,7 @@ final class Database
             $rootPath = ROOTPATH;
             $this->dbConnection = new \PDO("sqlite:".ROOTPATH."/tubes1wbd.db");
             $this->dbConnection->query('PRAGMA foreign_keys = ON;');
+            $this->dbConnection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\Exception $e) {
             exit("Error! " . $e->getMessage());
         }
