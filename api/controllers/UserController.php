@@ -4,7 +4,7 @@ namespace API\Controllers;
 use API\TableGateways\UserGateway;
 use Controller;
 
-require("../tableGateways/UserGateway.php");
+require(getcwd()."/tableGateways/UserGateway.php");
 require("Controller.php");
 
 class UserController implements Controller {

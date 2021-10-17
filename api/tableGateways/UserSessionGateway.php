@@ -1,7 +1,7 @@
 <?php
 namespace API\TableGateways;
 use API\DB\Database;
-require_once("../db/Database.php");
+require_once(getcwd()."/db/Database.php");
 
 class UserSessionGateway {
     private $dbCon = null;

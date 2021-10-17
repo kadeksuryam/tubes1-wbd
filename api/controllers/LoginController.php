@@ -2,9 +2,9 @@
 
 use API\TableGateways\UserGateway;
 use API\TableGateways\UserSessionGateway;
-require_once("../tableGateways/UserGateway.php");
-require_once("../tableGateways/UserSessionGateway.php");
-require_once("../utils/AuthUtil.php");
+require_once(getcwd()."/tableGateways/UserGateway.php");
+require_once(getcwd()."/tableGateways/UserSessionGateway.php");
+require_once(getcwd()."/utils/AuthUtil.php");
 require_once("Controller.php");
 
 class LoginController implements Controller {

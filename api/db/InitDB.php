@@ -40,10 +40,10 @@ EOS;
 $stmtCreateDorayakisTable = <<<EOS
     CREATE TABLE IF NOT EXISTS dorayakis (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        nama VARCHAR(256) UNIQUE NOT NULL,
+        nama VARCHAR(256) NOT NULL,
         deskripsi TEXT,
         harga INTEGER NOT NULL,
-        stok INTEGER NOT NULL,
+        stok INTEGER NOT NULL DEFAULT 0,
         gambar TEXT NOT NULL,
         created_at DATETIME,
         updated_at DATETIME

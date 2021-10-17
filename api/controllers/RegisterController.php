@@ -5,8 +5,9 @@ use API\TableGateways\UserGateway;
 use API\TableGateways\UserSessionGateway;
 
 require_once("Controller.php");
-require_once("../utils/validationUtil.php");
-require_once("../db/Database.php");
+require_once(getcwd()."/utils/validationUtil.php");
+require_once(getcwd()."/db/Database.php");
+
 class RegisterController implements Controller {
     private $userGateway;
     private $userSessionGateway;
@@ -39,7 +40,7 @@ class RegisterController implements Controller {
             $validationErrorResponse = $this->validateRequest();
             if(!empty($validationErrorResponse)) {
                 header("HTTP/1.1 400 Bad Request");
-                echo json_encode(["error" => $validationErrorResponse]);
+                echo json_encode(["message" => $validationErrorResponse]);
                 exit();
             }
 

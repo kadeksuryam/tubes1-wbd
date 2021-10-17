@@ -1,7 +1,7 @@
 <?php
 
 use API\TableGateways\UserSessionGateway;
-require_once("../tableGateways/UserSessionGateway.php");
+require_once(getcwd()."/tableGateways/UserSessionGateway.php");
 
 class AuthUtil {
     private $userSessionGateway;
