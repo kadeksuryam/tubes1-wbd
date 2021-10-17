@@ -37,6 +37,10 @@ class DorayakiController implements Controller {
     public function processRequest()
     {
         switch($this->requestMethod){
+            case "GET":
+                if(isset($this->dorayakiId))
+                    $this->getDorayaki();
+                break;
             case "POST":
                 $this->createNewDorayaki();
                 break;
@@ -50,11 +54,30 @@ class DorayakiController implements Controller {
         }
     }
 
+    private function getDorayaki() {
+        try {
+            $result = $this->dorayakiGateway->findById($this->dorayakiId);
+
+            if(!isset($result[0])) {
+                header("HTTP/1.1 404 Not Found");
+                echo json_encode(["message" => "Dorayaki not found"]);
+                exit();
+            }
+
+            header("HTTP/1.1 200 OK");
+            echo json_encode($result[0]);
+        } catch(\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
+    }
+
     private function createNewDorayaki() {
         $cleanFileName = "";
         try {
             $this->validateRequestBody();
-            if(!empty($_FILES["gambar"])) { 
+            if(isset($_FILES["gambar"]) && $_FILES["gambar"]["size"] != 0) { 
                 $this->validateImage();
     
                 $fileName = $_FILES["gambar"]["name"];
@@ -72,6 +95,7 @@ class DorayakiController implements Controller {
         }
         
         try {
+            $this->dbConnection->beginTransaction();
             $inputDorayaki = ["nama" => $this->reqNama, 
                 "deskripsi" => $this->reqDeskripsi, "harga" => $this->reqHarga, "stok" => $this->reqStok,
                 "gambar" => "/api/static/images/dorayakis/".$cleanFileName];
@@ -91,10 +115,11 @@ class DorayakiController implements Controller {
                 "stateBefore" => "",  "stateAfter" => $stateAfter];
             
             $this->dorayakiActivityGateway->insert($inputDorayakiActivites);
-
+            $this->dbConnection->commit();
             header("HTTP/1.1 200 OK");
             echo json_encode(["message" => "Successfully created dorayaki"]);
         } catch(\Exception $e) {
+            $this->dbConnection->rollBack();
             header("HTTP/1.1 500 Internal Server Error");
             echo json_encode(["message" => $e->getMessage()]);
             exit();
@@ -106,19 +131,28 @@ class DorayakiController implements Controller {
         $reqNama = $this->requestBody["nama"];
         $reqHarga = $this->requestBody["harga"];
         $reqStok = $this->requestBody["stok"];
+        $reqDeskripsi = $this->requestBody["deskripsi"];
         
         $errorMsg = [];
-
-        if(!isset($reqNama)) {
+        
+        if(!isset($reqNama) || strlen($reqNama) == 0) {
             array_push($errorMsg, ["nama" => "field 'nama' can't be empty"]);
         }
-        if(!isset($reqHarga)) {
+        if(!isset($reqHarga) || strlen($reqHarga) == 0) {
             array_push($errorMsg, ["harga" => "field 'harga' can't be empty"]);
         }
-        if(!isset($reqStok)) {
+        if((int)$reqHarga < 0) {
+            array_push($errorMsg, ["harga" => "harga can't be negative"]);
+        }
+        if(!isset($reqStok) || strlen($reqStok) == 0) {
             array_push($errorMsg, ["stok" => "field 'stok' can't be empty"]);
         }
-
+        if((int)$reqStok < 0) {
+            array_push($errorMsg, ["stok" => "stok can't be negative"]);
+        }
+        if(!isset($reqDeskripsi) || strlen($reqDeskripsi) == 0) {
+            array_push($errorMsg, ["deskripsi" => "field 'deskripsi' can't be empty"]);
+        }
         if(!empty($errorMsg)) $this->badRequestResponse($errorMsg);
     }
 

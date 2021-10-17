@@ -30,6 +30,20 @@ class DorayakiGateway {
         return $result;
     }
 
+    public function findById($id)
+    {
+        $stmt = <<<EOS
+            SELECT * FROM dorayakis WHERE
+            id = :id
+        EOS;
+        $stmt = $this->dbConnection->prepare($stmt);
+        $stmt->execute(array(
+            "id" => $id
+        ));
+        $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $result;
+    }
+
     public function insert(Array $input)
     {
         $stmt = <<<EOS

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        currPath = window.location.pathname;
+        parsePath = currPath.split("/");
+        if(isNaN(parseInt(parsePath[3]))) window.location.href = "/notfound"
+    </script>
+    <script src="index.js" defer></script>
+    <title>Edit Dorayaki</title>
+</head>
+<body>
+    <div>
+        <div id="notification"></div>
+        <form enctype="multipart/form-data" method="post" name="edit-dorayaki">
+            <label>Nama:</label><br/>
+            <input type="text" name="nama"><br/>
+            <label>Deskripsi:</label><br/>
+            <textarea type="text" name="deskripsi"></textarea><br/>
+            <label>Harga (dalam rupiah):</label><br/>
+            <input type="number" name="harga" value="0"><br/>
+            <label>Stok:</label><br/>
+            <input type="number" name="stok" value="0"><br/>
+            <label>Gambar:</label><br/>
+            <input type="file" name="gambar" accept="image/png, image/gif, image/jpeg"><br/>
+
+            <input type="submit" />
+        </form>
+    </div>
+</body>
+</html>
