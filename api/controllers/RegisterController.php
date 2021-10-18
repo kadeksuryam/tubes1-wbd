@@ -121,6 +121,10 @@ class RegisterController implements Controller {
             array_push($errorMsg, ["username" => "Username can't be empty"]);
             return;
         }
+        if(!preg_match("/^[a-zA-Z0-9_]+$/", $reqUsername)) {
+            array_push($errorMsg, ["username" => "Username not valid, only alphanumeric and underscore are allowed"]);
+            return;
+        }
         //check username uniqueness
         $res = $this->userGateway->findByUsername($reqUsername);
         if(!empty($res)) {

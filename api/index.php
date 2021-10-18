@@ -24,7 +24,7 @@ $authenticationUtil = new AuthenticationUtil(Database::getInstance()->getDbConne
 $authorizationUtil = new AuthorizationUtil();
 
 if($uri[1] == "api") {
-    if($uri[2] != "login" || $uri[2] != "register") {
+    if($uri[2] != "login" && $uri[2] != "register") {
         if($authenticationUtil->isCookieMalformed()) {
             malformedCookieResponse();
             exit();

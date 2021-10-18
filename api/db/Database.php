@@ -21,7 +21,10 @@ final class Database
     {
         try {
             $rootPath = ROOTPATH;
-            $this->dbConnection = new \PDO("sqlite:".ROOTPATH."/tubes1wbd.db");
+            $path = "sqlite:".ROOTPATH."/tubes1wbd.db";
+            if(isset($_ENV["PHP_ENV"]) && $_ENV["PHP_ENV"] == "production")
+                $path = "sqlite:/root/db/tubes1.wbd.db";
+            $this->dbConnection = new \PDO($path);
             $this->dbConnection->query('PRAGMA foreign_keys = ON;');
             $this->dbConnection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\Exception $e) {
