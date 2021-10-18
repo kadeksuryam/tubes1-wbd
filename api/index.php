@@ -1,11 +1,13 @@
 <?php
 
 use API\Controllers\UserController;
+use API\DB\Database;
 
 require_once("./controllers/UserController.php");
 require_once("./controllers/LoginController.php");
 require_once("./controllers/RegisterController.php");
 require_once("./controllers/DorayakiController.php");
+require_once("./utils/AuthorizationUtil.php");
 
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
@@ -16,21 +18,25 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = explode('/', $uri);
 
+
 $requestMethod = $_SERVER["REQUEST_METHOD"];
-$authUtil = new AuthUtil($dbConnection);
-//print_r($uri);
+$authenticationUtil = new AuthenticationUtil(Database::getInstance()->getDbConnection());
+$authorizationUtil = new AuthorizationUtil();
 
 if($uri[1] == "api") {
+    if($uri[2] != "login" || $uri[2] != "register") {
+        if($authenticationUtil->isCookieMalformed()) {
+            malformedCookieResponse();
+            exit();
+        }
+        if(!$authenticationUtil->isCookieStillValid()) {
+            cookieInvalidResponse();
+            exit();
+        }
+    }
+    $authorizationUtil->authorizeRequest($requestMethod, $uri);
     switch ($uri[2]) {
         case "users":
-            // if($authUtil->isCookieMalformed()) {
-            //     malformedCookieResponse();
-            //     exit();
-            // }
-            // if(!$authUtil->isCookieStillValid()) {
-            //     cookieInvalidResponse();
-            //     exit();
-            // }
             $userId = null;
             if(isset($uri[3])) {
                 $userId = $uri[3];

@@ -3,7 +3,7 @@
 use API\TableGateways\UserSessionGateway;
 require_once(getcwd()."/tableGateways/UserSessionGateway.php");
 
-class AuthUtil {
+class AuthenticationUtil {
     private $userSessionGateway;
     private $sessionIdCookie;
     private $userIdCookie;

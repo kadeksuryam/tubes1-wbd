@@ -4,7 +4,7 @@ use API\TableGateways\UserGateway;
 use API\TableGateways\UserSessionGateway;
 require_once(getcwd()."/tableGateways/UserGateway.php");
 require_once(getcwd()."/tableGateways/UserSessionGateway.php");
-require_once(getcwd()."/utils/AuthUtil.php");
+require_once(getcwd()."/utils/AuthenticationUtil.php");
 require_once("Controller.php");
 
 class LoginController implements Controller {
@@ -22,7 +22,7 @@ class LoginController implements Controller {
 
         $this->userGateway = new UserGateway();
         $this->userSessionGateway = new UserSessionGateway();
-        $this->auth = new AuthUtil();
+        $this->auth = new AuthenticationUtil();
     }
 
     public function processRequest()

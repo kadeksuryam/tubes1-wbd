@@ -146,7 +146,7 @@ class DorayakiController implements Controller {
     }
     
     private function updateDorayaki() {
-        if(!isset($this->dorayakiId)) {
+        if(!is_numeric($this->dorayakiId)) {
             $this->badRequestResponse("Dorayaki Id is required");
         }
     }
