@@ -91,15 +91,12 @@ EOS;
 $stmtCreateDorayakiActivitiesTable = <<<EOS
     CREATE TABLE IF NOT EXISTS dorayaki_activities (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        dorayaki_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
+        state_user TEXT NOT NULL,
         action_type VARCHAR(256) NOT NULL,
         state_before TEXT NOT NULL,
         state_after TEXT NOT NULL,
         created_at DATETIME,
-        updated_at DATETIME,
-        FOREIGN KEY(dorayaki_id) REFERENCES dorayakis(id),
-        FOREIGN KEY(user_id) REFERENCES users(id)
+        updated_at DATETIME
     );
 
     CREATE TRIGGER insert_dorayaki_activities

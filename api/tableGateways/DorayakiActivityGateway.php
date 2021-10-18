@@ -14,15 +14,14 @@ class DorayakiActivityGateway {
     {
         $stmt = <<<EOS
             INSERT INTO dorayaki_activities
-                (dorayaki_id, user_id, action_type, state_before, state_after) 
+                (state_user, action_type, state_before, state_after) 
             VALUES 
-                (:dorayakiId, :userId, :actionType, :stateBefore, :stateAfter)
+                (:stateUser, :actionType, :stateBefore, :stateAfter)
         EOS;
 
         $stmt = $this->dbConnection->prepare($stmt);
         $stmt->execute(array(
-            "dorayakiId" => $input["dorayakiId"],
-            "userId" => $input["userId"],
+            "stateUser" => $input["stateUser"],
             "actionType" => $input["actionType"],
             "stateBefore" => $input["stateBefore"],
             "stateAfter" => $input["stateAfter"],

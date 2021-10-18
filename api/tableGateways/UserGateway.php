@@ -5,11 +5,11 @@ use API\DB\Database;
 require_once(getcwd()."/db/Database.php");
 
 class UserGateway {
-    private $dbCon = null;
+    private $dbConnection = null;
 
     public function __construct()
     {
-        $this->dbCon = Database::getInstance()->getDbConnection();
+        $this->dbConnection = Database::getInstance()->getDbConnection();
     }
 
     public function findAll()
@@ -18,7 +18,7 @@ class UserGateway {
             SELECT * FROM users;
         EOS;
 
-        $stmt = $this->dbCon->query($stmt);
+        $stmt = $this->dbConnection->query($stmt);
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return $result;
     }
@@ -29,7 +29,7 @@ class UserGateway {
             SELECT * FROM users WHERE id = :id;
         EOS;
 
-        $stmt = $this->dbCon->prepare($stmt);
+        $stmt = $this->dbConnection->prepare($stmt);
         $stmt->execute(array("id" => $id));
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return $result;
@@ -41,7 +41,7 @@ class UserGateway {
             SELECT * FROM users WHERE email = :email;
         EOS;
 
-        $stmt = $this->dbCon->prepare($stmt);
+        $stmt = $this->dbConnection->prepare($stmt);
         $stmt->execute(array("email" => $email));
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return $result;
@@ -53,7 +53,7 @@ class UserGateway {
             SELECT * FROM users WHERE username = :username;
         EOS;
 
-        $stmt = $this->dbCon->prepare($stmt);
+        $stmt = $this->dbConnection->prepare($stmt);
         $stmt->execute(array("username" => $username));
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return $result;
@@ -68,7 +68,7 @@ class UserGateway {
                 (:email, :username, :password, :is_admin)
         EOS;
 
-        $stmt = $this->dbCon->prepare($stmt);
+        $stmt = $this->dbConnection->prepare($stmt);
         $stmt->execute(array(
             "email" => $input["email"],
             "username" => $input["username"],
@@ -88,7 +88,7 @@ class UserGateway {
             WHERE id = :id;
         EOS;
 
-        $stmt = $this->dbCon->prepare($stmt);
+        $stmt = $this->dbConnection->prepare($stmt);
         $stmt->execute(array(
             "id" => (int)$id,
             "email" => $input["email"],
@@ -104,7 +104,7 @@ class UserGateway {
             WHERE id = :id;
         EOS;
 
-        $stmt = $this->dbCon->prepare($stmt);
+        $stmt = $this->dbConnection->prepare($stmt);
         $stmt->execute(array("id" => (int)$id));
         
         return $stmt->rowCount();

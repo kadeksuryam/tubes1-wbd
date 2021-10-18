@@ -23,17 +23,17 @@ $authUtil = new AuthUtil($dbConnection);
 if($uri[1] == "api") {
     switch ($uri[2]) {
         case "users":
-            if($authUtil->isCookieMalformed()) {
-                malformedCookieResponse();
-                exit();
-            }
-            if(!$authUtil->isCookieStillValid()) {
-                cookieInvalidResponse();
-                exit();
-            }
+            // if($authUtil->isCookieMalformed()) {
+            //     malformedCookieResponse();
+            //     exit();
+            // }
+            // if(!$authUtil->isCookieStillValid()) {
+            //     cookieInvalidResponse();
+            //     exit();
+            // }
             $userId = null;
             if(isset($uri[3])) {
-                $userId = (int)$uri[3];
+                $userId = $uri[3];
             }
             $controller = new UserController($userId);
             break;
@@ -46,7 +46,7 @@ if($uri[1] == "api") {
         case "dorayakis":
             $dorayakiId = null;
             if(isset($uri[3])) {
-                $dorayakiId = (int)$uri[3];
+                $dorayakiId = $uri[3];
             }
             $controller = new DorayakiController($dorayakiId);
             break;

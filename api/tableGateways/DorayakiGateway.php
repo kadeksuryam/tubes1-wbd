@@ -97,7 +97,7 @@ class DorayakiGateway {
             WHERE id = :id;
         EOS;
 
-        $stmt = $this->dbCon->prepare($stmt);
+        $stmt = $this->dbConnection->prepare($stmt);
         $stmt->execute(array("id" => (int)$id));
         
         return $stmt->rowCount();

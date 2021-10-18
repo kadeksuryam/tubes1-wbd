@@ -1,16 +1,19 @@
 <?php
 
 use API\DB\Database;
+use API\TableGateways\UserGateway;
 
 require_once("Controller.php");
 require_once(getcwd()."/db/Database.php");
 require_once(getcwd()."/tableGateways/DorayakiGateway.php");
 require_once(getcwd()."/tableGateways/DorayakiActivityGateway.php");
+require_once(getcwd()."/tableGateways/UserGateway.php");
 define('MB', 1048576);
 
 class DorayakiController implements Controller {
     private $dorayakiGateway;
     private $dorayakiActivityGateway;
+    private $userGateway;
     private $dorayakiId;
     private $requestMethod;
     private $requestBody;
@@ -32,6 +35,7 @@ class DorayakiController implements Controller {
         $this->reqStok = $this->requestBody["stok"];
         $this->dorayakiGateway = new DorayakiGateway();
         $this->dorayakiActivityGateway = new DorayakiActivityGateway();
+        $this->userGateway = new UserGateway();
     }
 
     public function processRequest()
@@ -43,6 +47,12 @@ class DorayakiController implements Controller {
                 break;
             case "POST":
                 $this->createNewDorayaki();
+                break;
+            case "UPDATE":
+                $this->updateDorayaki();
+                break;
+            case "DELETE":
+                $this->deleteDorayaki();
                 break;
             default:
                 $response["status_code_header"] = "HTTP/1.1 404 Not Found";
@@ -103,15 +113,24 @@ class DorayakiController implements Controller {
             if(!isset($inputDorayaki["deskripsi"])) $inputDorayaki["deskripsi"] = "";
 
             $this->dorayakiGateway->insert($inputDorayaki);
-            $result = $this->dorayakiGateway->findByNamaHargaStok($inputDorayaki);
-            
+
+            // get inserted dorayaki
+            $insertedDorayaki = $this->dorayakiGateway->findByNamaHargaStok($inputDorayaki);
             $stateAfter = [];
-            foreach($result[0] as $key => $val) {
+            foreach($insertedDorayaki[0] as $key => $val) {
                 array_push($stateAfter, $key.":".$val);
             }
             $stateAfter = implode("|", $stateAfter);
-            $inputDorayakiActivites = ["dorayakiId" => $result[0]["id"], 
-                "userId" => $_COOKIE["user_id"], "actionType" => "CREATE", 
+
+            // get current user
+            $currUserDetail = $this->userGateway->find($_COOKIE["user_id"]);
+            $stateUser = [];
+            array_push($stateUser, "email:".$currUserDetail[0]["email"]);
+            array_push($stateUser, "username:".$currUserDetail[0]["username"]);
+            $stateUser = implode("|", $stateUser);
+
+            $inputDorayakiActivites = [
+                "stateUser" => $stateUser, "actionType" => "CREATE", 
                 "stateBefore" => "",  "stateAfter" => $stateAfter];
             
             $this->dorayakiActivityGateway->insert($inputDorayakiActivites);
@@ -126,6 +145,54 @@ class DorayakiController implements Controller {
         }
     }
     
+    private function updateDorayaki() {
+        if(!isset($this->dorayakiId)) {
+            $this->badRequestResponse("Dorayaki Id is required");
+        }
+    }
+
+    private function deleteDorayaki() {
+        if(!is_numeric($this->dorayakiId)) {
+            $this->badRequestResponse("Dorayaki Id is required");
+        }
+
+        try {
+            $this->dbConnection->beginTransaction();
+            $result = $this->dorayakiGateway->findById($this->dorayakiId);
+            if(!isset($result[0])) {
+                header("HTTP/1.1 404 Not Found");
+                echo json_encode(["message" => "Dorayaki not found"]);
+                exit();
+            }
+            $stateBefore = [];
+            foreach($result[0] as $key => $val) {
+                array_push($stateBefore, $key.":".$val);
+            }
+            $stateBefore = implode("|", $stateBefore);
+
+            // get current user
+            $currUserDetail = $this->userGateway->find($_COOKIE["user_id"]);
+            $stateUser = [];
+            array_push($stateUser, "email:".$currUserDetail[0]["email"]);
+            array_push($stateUser, "username:".$currUserDetail[0]["username"]);
+            $stateUser = implode("|", $stateUser);
+
+            $inputDorayakiActivites = ["stateUser" => $stateUser, "actionType" => "DELETE", 
+                "stateBefore" => $stateBefore,  "stateAfter" => ""];
+
+            $this->dorayakiActivityGateway->insert($inputDorayakiActivites);
+            $this->dorayakiGateway->delete($this->dorayakiId);
+            $this->dbConnection->commit();
+
+            header("HTTP/1.1 200 OK");
+            echo json_encode(["message" => "Successfully deleted dorayaki"]);
+        } catch(\Exception $e) {
+            $this->dbConnection->rollBack();
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
+    }
 
     private function validateRequestBody() {
         $reqNama = $this->requestBody["nama"];
@@ -171,10 +238,6 @@ class DorayakiController implements Controller {
         if(($info[2] !== IMAGETYPE_GIF) && ($info[2] !== IMAGETYPE_JPEG) && ($info[2] !== IMAGETYPE_PNG)) {
             $this->badRequestResponse("Not a gif/jpeg/png");
         }
-
-        // if ($_FILES["gambar"]["size"] > MB) {
-        //     $this->badRequestResponse("File is too large. Max upload file is 5 MB");
-        // }
     }
 
     private function badRequestResponse($message) {

@@ -1,4 +1,3 @@
-
 function main() {
     currPath = window.location.pathname;
     parsePath = currPath.split("/");
