@@ -73,20 +73,13 @@ class DorayakiGateway {
                 deskripsi = :deskripsi,
                 harga = :harga,
                 stok = :stok,
-                gambar = :gambar,
+                gambar = :gambar
             WHERE id = :id;
         EOS;
 
-        if(!isset($input["gambar"])) $input["gambar"] = "/static/images/dorayakis/default.jpeg";
-        if(!isset($input["stok"])) $input["harga"] = 0;
         $stmt = $this->dbConnection->prepare($stmt);
-        $stmt->execute(array(
-            "id" => (int)$id,
-            "nama" => $input["nama"],
-            "deskripsi" => $input["deskripsi"],
-            "stok" => $input["stok"],
-            "gambar" => $input["gambar"],
-        ));
+        
+        $stmt->execute($input);
         return $stmt->rowCount();
     }
 

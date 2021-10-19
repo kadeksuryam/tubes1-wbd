@@ -8,6 +8,7 @@ $stmtDropAllTables = <<<EOS
     DROP TABLE IF EXISTS dorayakis;
     DROP TABLE IF EXISTS user_sessions;
     DROP TABLE IF EXISTS dorayaki_activities;
+    DROP TABLE IF EXISTS pembelian_dorayakis;
     PRAGMA foreign_keys = ON;
 EOS;
 
@@ -17,7 +18,7 @@ $stmtCreateUsersTable = <<<EOS
         email VARCHAR(256) NOT NULL,
         username VARCHAR(256) UNIQUE NOT NULL,
         password VARCHAR(256) NOT NULL,
-        is_admin INTEGER NOT NULL DEFAULT 0,
+        is_admin INTEGER CHECK((is_admin == 0 OR is_admin == 1) AND (CAST(is_admin||1 AS INTEGER) <> 0)) NOT NULL DEFAULT 0,
         created_at DATETIME,
         updated_at DATETIME
     );
@@ -42,8 +43,8 @@ $stmtCreateDorayakisTable = <<<EOS
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         nama VARCHAR(256) NOT NULL,
         deskripsi TEXT NOT NULL,
-        harga INTEGER NOT NULL DEFAULT 0,
-        stok INTEGER NOT NULL DEFAULT 0,
+        harga INTEGER CHECK ((CAST(harga||1 AS INTEGER) <> 0) AND harga >= 0) NOT NULL DEFAULT 0,
+        stok INTEGER CHECK ((CAST(stok||1 AS INTEGER) <> 0) AND stok >= 0) NOT NULL DEFAULT 0,
         gambar TEXT NOT NULL,
         created_at DATETIME,
         updated_at DATETIME
@@ -122,7 +123,7 @@ $stmtCreatePembelianDorayakiTable = <<<EOS
         user_id INTEGER NOT NULL,
         jumlah INTEGER NOT NULL,
         created_at DATETIME,
-        updated_at DATETIME,
+        updated_at DATETIME
     );
 
     CREATE TRIGGER insert_pembelian_dorayakis
@@ -151,6 +152,7 @@ try {
     $dbConnection->exec($stmtCreateDorayakisTable);
     $dbConnection->exec($stmtCreateUserSessionsTable);
     $dbConnection->exec($stmtCreateDorayakiActivitiesTable);
+    $dbConnection->exec($stmtCreatePembelianDorayakiTable);
 
     /* Create Admin User */
     $stmtCreateUserPrep = $dbConnection->prepare($stmtCreateUser);

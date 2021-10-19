@@ -82,7 +82,7 @@ function verifyCookie($authenticationUtil) {
 }
 
 function malformedCookieResponse() {
-    header("HTTP/1.1 400 Bad Request");
+    header("HTTP/1.1 401 Unauthorized");
     echo json_encode(["message" => "malformed cookies"]);
     exit();
 }
@@ -92,5 +92,4 @@ function cookieInvalidResponse() {
     echo json_encode(["message" => "session expired"]);
     exit();
 }
-
 

@@ -20,10 +20,6 @@ class DorayakiController implements Controller {
     private $requestMethod;
     private $requestBody;
     private $dbConnection;
-    private $reqNama;
-    private $reqDeskripsi;
-    private $reqHarga;
-    private $reqStok;
 
     public function __construct($dorayakiId)
     {
@@ -49,10 +45,10 @@ class DorayakiController implements Controller {
                     $this->getDorayaki();
                 break;
             case "POST":
-                $this->createNewDorayaki();
-                break;
-            case "UPDATE":
-                $this->updateDorayaki();
+                if($_GET["type"] == "update") {
+                    $this->updateDorayaki();
+                }
+                else $this->createNewDorayaki();
                 break;
             case "DELETE":
                 $this->deleteDorayaki();
@@ -109,11 +105,9 @@ class DorayakiController implements Controller {
         
         try {
             $this->dbConnection->beginTransaction();
-            $inputDorayaki = ["nama" => $this->reqNama, 
-                "deskripsi" => $this->reqDeskripsi, "harga" => $this->reqHarga, "stok" => $this->reqStok,
-                "gambar" => "/api/static/images/dorayakis/".$cleanFileName];
-            
-            if(!isset($inputDorayaki["deskripsi"])) $inputDorayaki["deskripsi"] = "";
+            $inputDorayaki = ["nama" => $this->requestBody["nama"], 
+                "deskripsi" => $this->requestBody["deskripsi"], "harga" => $this->requestBody["harga"],
+                "stok" => $this->requestBody["stok"],"gambar" => "/api/static/images/dorayakis/".$cleanFileName];
 
             $this->dorayakiGateway->insert($inputDorayaki);
 
@@ -165,6 +159,7 @@ class DorayakiController implements Controller {
                 $this->forbiddenRequestResponse("admin only operation");
             }
         }
+
         $cleanFileName = null;
         try {
             if(isset($_FILES["gambar"]) && $_FILES["gambar"]["size"] != 0) { 
@@ -180,20 +175,35 @@ class DorayakiController implements Controller {
             echo json_encode(["message" => $e->getMessage()]);
             exit();
         }
+
+        $nama = $this->requestBody["nama"];
+        $deskripsi = $this->requestBody["deskripsi"];
+        $harga = $this->requestBody["harga"];
+        $stok = $this->requestBody["stok"];
+        $gambar =  $cleanFileName;
+
+        $inputPayload = ["nama" => $nama, "deskripsi" => $deskripsi, "harga" => $harga, "stok" => $stok, "gambar" => $gambar];
+        $updatePayload = $this->dorayakiGateway->findById($this->dorayakiId)[0];
+        foreach($inputPayload as $key => $value) {
+            if($key == "gambar") $updatePayload["gambar"]= "/api/static/images/dorayakis/".$inputPayload["gambar"];
+            else $updatePayload[$key] = $value;
+        }
+        unset($updatePayload["created_at"]);
+        unset($updatePayload["updated_at"]);
+
+        $this->validateUpdatePayload($inputPayload);
+
         try {
             $this->dbConnection->beginTransaction();
-            $nama = $this->requestBody["nama"];
-            $deskripsi = $this->requestBody["deskripsi"];
-            $harga = $this->requestBody["harga"];
-            $stok = $this->requestBody["stok"];
-            $gambar = $cleanFileName;
 
-            $updatePayload = ["nama" => $nama, "deskripsi" => $deskripsi, "harga" => $harga, "stok" => $stok, "gambar" => $gambar];
             $this->dorayakiGateway->update($this->dorayakiId, $updatePayload);
             $riwayatPembelian = ["dorayakiId" => $currDorayaki[0]["id"], "dorayakiNama" => $currDorayaki[0]["nama"],
-                "dorayakiHarga" => $currDorayaki[0]["harga"], "userId" => $_COOKIE["user_id"], "jumlah" => $currDorayaki[0]["stok"]-$stok];
+                "dorayakiHarga" => $currDorayaki[0]["harga"], "userId" => $_COOKIE["user_id"], "jumlah" => $stok-$currDorayaki[0]["stok"]];
             $this->pembelianDorayakiGateway->insert($riwayatPembelian);
             $this->dbConnection->commit();
+
+            header("HTTP/1.1 200 OK");
+            echo json_encode(["message" => "Successfully updated the dorayaki"]);
         } catch(\Exception $e) {
             $this->dbConnection->rollBack();
             header("HTTP/1.1 500 Internal Server Error");
@@ -269,6 +279,36 @@ class DorayakiController implements Controller {
             array_push($errorMsg, ["stok" => "stok can't be negative"]);
         }
         if(!isset($reqDeskripsi) || strlen($reqDeskripsi) == 0) {
+            array_push($errorMsg, ["deskripsi" => "field 'deskripsi' can't be empty"]);
+        }
+        if(!empty($errorMsg)) $this->badRequestResponse($errorMsg);
+    }
+
+    private function validateUpdatePayload($payload) {
+        $nama = $payload["nama"];
+        $harga = $payload["harga"];
+        $stok = $payload["stok"];
+        $deskripsi = $payload["deskripsi"];
+
+        $errorMsg = [];
+        
+        if(!isset($nama) || strlen($nama) == 0) {
+            array_push($errorMsg, ["nama" => "field 'nama' can't be empty"]);
+        }
+        if(!isset($harga) || strlen($harga) == 0) {
+            array_push($errorMsg, ["harga" => "field 'harga' can't be empty"]);
+        }
+        if((int)$harga < 0) {
+            array_push($errorMsg, ["harga" => "harga can't be negative"]);
+        }
+
+        if(!isset($stok) || strlen($stok) == 0) {
+            array_push($errorMsg, ["stok" => "field 'stok' can't be empty"]);
+        }
+        if((int)$stok< 0) {
+            array_push($errorMsg, ["stok" => "stok can't be negative"]);
+        }
+        if(!isset($deskripsi) || strlen($deskripsi) == 0) {
             array_push($errorMsg, ["deskripsi" => "field 'deskripsi' can't be empty"]);
         }
         if(!empty($errorMsg)) $this->badRequestResponse($errorMsg);
