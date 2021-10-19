@@ -8,12 +8,14 @@ require_once(getcwd()."/db/Database.php");
 require_once(getcwd()."/tableGateways/DorayakiGateway.php");
 require_once(getcwd()."/tableGateways/DorayakiActivityGateway.php");
 require_once(getcwd()."/tableGateways/UserGateway.php");
+require_once(getcwd()."/tableGateways/PembelianDorayakiGateway.php");
 define('MB', 1048576);
 
 class DorayakiController implements Controller {
     private $dorayakiGateway;
     private $dorayakiActivityGateway;
     private $userGateway;
+    private $pembelianDorayakiGateway;
     private $dorayakiId;
     private $requestMethod;
     private $requestBody;
@@ -36,6 +38,7 @@ class DorayakiController implements Controller {
         $this->dorayakiGateway = new DorayakiGateway();
         $this->dorayakiActivityGateway = new DorayakiActivityGateway();
         $this->userGateway = new UserGateway();
+        $this->pembelianDorayakiGateway = new PembelianDorayakiGateway();
     }
 
     public function processRequest()
@@ -149,6 +152,54 @@ class DorayakiController implements Controller {
         if(!is_numeric($this->dorayakiId)) {
             $this->badRequestResponse("Dorayaki Id is required");
         }
+        $currDorayaki = $this->dorayakiGateway->findById($this->dorayakiId);
+        if(!isset($currDorayaki[0])) {
+            header("HTTP/1.1 404 Not Found");
+            echo json_encode(["message" => "Dorayaki not found"]);
+            exit();
+        }
+        if(!$_COOKIE["is_admin"]) {
+            if(count($this->requestBody) != 1 || 
+                !array_key_exists("stok", $this->requestBody) ||
+                $this->requestBody["stok"] > $currDorayaki[0]["stok"]) {
+                $this->forbiddenRequestResponse("admin only operation");
+            }
+        }
+        $cleanFileName = null;
+        try {
+            if(isset($_FILES["gambar"]) && $_FILES["gambar"]["size"] != 0) { 
+                $this->validateImage();
+    
+                $fileName = $_FILES["gambar"]["name"];
+                $cleanFileName = preg_replace(array('/\s/', '/\.[\.]+/', '/[^\w_\.\-]/'), array('_', '.', ''), $fileName);
+                $cleanFileName = time().".".$cleanFileName;
+                move_uploaded_file($_FILES["gambar"]["tmp_name"], getcwd()."/static/images/dorayakis/".$cleanFileName);
+            }
+        } catch(\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
+        try {
+            $this->dbConnection->beginTransaction();
+            $nama = $this->requestBody["nama"];
+            $deskripsi = $this->requestBody["deskripsi"];
+            $harga = $this->requestBody["harga"];
+            $stok = $this->requestBody["stok"];
+            $gambar = $cleanFileName;
+
+            $updatePayload = ["nama" => $nama, "deskripsi" => $deskripsi, "harga" => $harga, "stok" => $stok, "gambar" => $gambar];
+            $this->dorayakiGateway->update($this->dorayakiId, $updatePayload);
+            $riwayatPembelian = ["dorayakiId" => $currDorayaki[0]["id"], "dorayakiNama" => $currDorayaki[0]["nama"],
+                "dorayakiHarga" => $currDorayaki[0]["harga"], "userId" => $_COOKIE["user_id"], "jumlah" => $currDorayaki[0]["stok"]-$stok];
+            $this->pembelianDorayakiGateway->insert($riwayatPembelian);
+            $this->dbConnection->commit();
+        } catch(\Exception $e) {
+            $this->dbConnection->rollBack();
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
     }
 
     private function deleteDorayaki() {
@@ -242,6 +293,12 @@ class DorayakiController implements Controller {
 
     private function badRequestResponse($message) {
         header("HTTP/1.1 400 Bad Request");
+        echo json_encode(["message" => $message]);
+        exit();
+    }
+
+    private function forbiddenRequestResponse($message) {
+        header("HTTP/1.1 403 Forbidden");
         echo json_encode(["message" => $message]);
         exit();
     }

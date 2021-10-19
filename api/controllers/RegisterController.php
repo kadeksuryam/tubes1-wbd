@@ -37,19 +37,16 @@ class RegisterController implements Controller {
                 exit();
             }
 
-            $validationErrorResponse = $this->validateRequest();
-            if(!empty($validationErrorResponse)) {
-                header("HTTP/1.1 400 Bad Request");
-                echo json_encode(["message" => $validationErrorResponse]);
-                exit();
-            }
+            $this->validateRequest();
 
-            if($this->requestParam["type"] == "validationOnly") {
-                $response["status_code_header"] = "HTTP/1.1 200 OK";
-                $response["body"] = ["message" => "All validation success"];
-                header($response["status_code_header"]);
-                echo json_encode($response["body"]);
-                exit();
+            if(array_key_exists("req_type", $this->requestParam)) {
+                if($this->requestParam["req_type"] == "validationOnly") {
+                    $response["status_code_header"] = "HTTP/1.1 200 OK";
+                    $response["body"] = ["message" => "All validation success"];
+                    header($response["status_code_header"]);
+                    echo json_encode($response["body"]);
+                    exit();
+                }
             }
         }
         catch(\Exception $e) {
@@ -98,6 +95,16 @@ class RegisterController implements Controller {
     }
 
     private function validateRequest() {
+        if(!array_key_exists("email", $this->requestBody)) {
+            $this->badRequestResponse(["email" => "Email field is required"]);
+        }
+        if(!array_key_exists("password", $this->requestBody)) {
+            $this->badRequestResponse(["password" => "Password field is required"]);
+        }
+        if(!array_key_exists("username", $this->requestBody)) {
+            $this->badRequestResponse(["username" => "Username field is required"]);
+        }
+
         $reqEmail = $this->requestBody["email"];
         $reqPassword = $this->requestBody["password"];
         $errorMsg = [];
@@ -109,9 +116,10 @@ class RegisterController implements Controller {
         }
         if(!isValidPassword($reqPassword)) {
             array_push($errorMsg, ["password" => "Password must be at least 8 characters in length and must contain at least one number, one upper case letter, one lower case letter and one special character."]);
+        }     
+        if(!empty($errorMsg)) {
+            $this->badRequestResponse($errorMsg);
         }
-        
-        return $errorMsg;
     }
 
     private function validateUsername(&$errorMsg) {
@@ -130,5 +138,11 @@ class RegisterController implements Controller {
         if(!empty($res)) {
             array_push($errorMsg, ["username" => "Username must be unique, please pick another username"]);
         }
+    }
+
+    private function badRequestResponse($errorMsg) {
+        header("HTTP/1.1 400 Bad Request");
+        echo json_encode(["message" => $errorMsg]);
+        exit();
     }
 }

@@ -17,22 +17,29 @@ class AuthorizationUtil {
     public function authorizeRequest($requestMethod, $uri) {
         switch($uri[2]) {
             case "users":
+                if($this->isAdmin) break;
                 switch($requestMethod) {
                     case "GET":
-                        if(!isset($uri[3]) && !$this->isAdmin) $this->forbiddenResponse();
+                        if(!isset($uri[3])) $this->forbiddenResponse();
                         if(isset($uri[3]) && $uri[3] != $this->userId) $this->forbiddenResponse();
+                        break;
                     case "UPDATE":
-                        if(!$this->isAdmin) $this->forbiddenResponse();
+                        $this->forbiddenResponse();
+                        break;
                     case "DETELE":
                         if(isset($uri[3]) && $uri[3] != $this->userId) $this->forbiddenResponse();
+                        break;
                 }
                 break;
             case "dorayakis":
+                if($this->isAdmin) break;
                 switch($requestMethod) {
                     case "POST":
-                        if(isset($uri[3]) && !$this->isAdmin) $this->forbiddenResponse();
+                        $this->forbiddenResponse();
+                        break;
                     case "DELETE":
-                        if(isset($uri[3]) && !$this->isAdmin) $this->forbiddenResponse();
+                        $this->forbiddenResponse();
+                        break;
                 }
         }
     }

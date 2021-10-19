@@ -36,13 +36,13 @@ class LoginController implements Controller {
                 exit();
             }
 
-            if($this->auth->isCookieStillValid()) {
-                $response["status_code_header"] = "HTTP/1.1 200 OK";
-                $response["body"] = ["message" => "successfully logged in: already loggedin"];
-                header($response["status_code_header"]);
-                echo json_encode($response["body"]);
-                exit();
-            }
+            // if($this->auth->isCookieStillValid()) {
+            //     $response["status_code_header"] = "HTTP/1.1 200 OK";
+            //     $response["body"] = ["message" => "successfully logged in: already loggedin"];
+            //     header($response["status_code_header"]);
+            //     echo json_encode($response["body"]);
+            //     exit();
+            // }
         
             //business logic login
             $reqUsername = $this->requestBody["username"];

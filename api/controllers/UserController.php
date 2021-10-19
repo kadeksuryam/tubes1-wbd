@@ -37,7 +37,7 @@ class UserController implements Controller {
         }
         header($response['status_code_header']);
         if ($response["body"]) {
-            echo $response["body"];
+            echo json_encode($response["body"]);
         }
     }
 
@@ -45,7 +45,7 @@ class UserController implements Controller {
     {
         $result = $this->userGateway->findAll();
         $response["status_code_header"] = "HTTP/1.1 200 OK";
-        $response["body"] = json_encode($result);
+        $response["body"] = $result;
         return $response;
     }
 
@@ -53,14 +53,14 @@ class UserController implements Controller {
     {
         $result = $this->userGateway->find($id);
         $response["status_code_header"] = "HTTP/1.1 200 OK";
-        $response["body"] = json_encode($result);
+        $response["body"] = $result[0];
         return $response;
     }
 
     private function notFoundResponse()
     {
         $response["status_code_header"] = "HTTP/1.1 404 Not Found";
-        $response["body"] = null;
+        $response["body"] = ["message" => "Method not found"];
         return $response;
     }
 }

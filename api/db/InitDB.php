@@ -113,6 +113,32 @@ $stmtCreateDorayakiActivitiesTable = <<<EOS
     END;
 EOS;
 
+$stmtCreatePembelianDorayakiTable = <<<EOS
+    CREATE TABLE IF NOT EXISTS pembelian_dorayakis (
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        dorayaki_id INTEGER NOT NULL,
+        dorayaki_nama VARCHAR(256) NOT NULL,
+        dorayaki_harga VARCHAR(256) NOT NULL,
+        user_id INTEGER NOT NULL,
+        jumlah INTEGER NOT NULL,
+        created_at DATETIME,
+        updated_at DATETIME,
+    );
+
+    CREATE TRIGGER insert_pembelian_dorayakis
+    AFTER INSERT ON pembelian_dorayakis
+    BEGIN
+        UPDATE pembelian_dorayakis SET created_at=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') WHERE id = NEW.id;
+        UPDATE pembelian_dorayakis SET updated_at=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') WHERE id = NEW.id;
+    END;
+ 
+    CREATE TRIGGER update_pembelian_dorayakis
+    AFTER UPDATE ON pembelian_dorayakis
+    BEGIN
+        UPDATE pembelian_dorayakis SET updated_at=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') WHERE id = NEW.id;
+    END;
+EOS;
+
 $stmtCreateUser = <<<EOS
     INSERT INTO users (email, username, password, is_admin) 
     VALUES (:email, :username, :password, :is_admin)

@@ -22,7 +22,7 @@ class AuthenticationUtil {
     public function isCookieMalformed() {
         if(!(isset($this->sessionIdCookie) && 
             isset($this->userIdCookie) && 
-            isset($this->isAdminCookie))) return true;
+            isset($this->isAdminCookie)) || empty($this->dbUserSession)) return true;
 
         $dbSessionId = $this->dbUserSession[0]["session_id"];
         $dbUserId = $this->dbUserSession[0]["user_id"];
@@ -37,7 +37,7 @@ class AuthenticationUtil {
     public function isCookieStillValid() {
         if($this->isCookieMalformed()) return false;
 
-        $dbUpdatedAt = $this->reqUser[0]["updated_at"];
+        $dbUpdatedAt = $this->dbUserSession[0]["updated_at"];
 
         $currDate = new DateTime(date("Y-m-d H:i:s"));
         $dbDate = new DateTime($dbUpdatedAt);
