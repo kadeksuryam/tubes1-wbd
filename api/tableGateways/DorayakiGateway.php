@@ -48,9 +48,9 @@ class DorayakiGateway {
     {
         $stmt = <<<EOS
             INSERT INTO dorayakis 
-                (nama, deskripsi, harga, stok, gambar) 
+                (nama, deskripsi, harga, stok, terjual, gambar) 
             VALUES 
-                (:nama, :deskripsi, :harga, :stok, :gambar)
+                (:nama, :deskripsi, :harga, :stok, :terjual, :gambar)
         EOS;
 
         $stmt = $this->dbConnection->prepare($stmt);
@@ -59,6 +59,7 @@ class DorayakiGateway {
             "deskripsi" => $input["deskripsi"],
             "harga" => $input["harga"],
             "stok" => $input["stok"],
+            "terjual" => $input["terjual"],
             "gambar" => $input["gambar"],
         ));
         return $stmt->rowCount();
@@ -73,6 +74,7 @@ class DorayakiGateway {
                 deskripsi = :deskripsi,
                 harga = :harga,
                 stok = :stok,
+                terjual = :terjual,
                 gambar = :gambar
             WHERE id = :id;
         EOS;

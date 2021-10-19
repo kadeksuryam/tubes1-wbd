@@ -45,6 +45,7 @@ $stmtCreateDorayakisTable = <<<EOS
         deskripsi TEXT NOT NULL,
         harga INTEGER CHECK ((CAST(harga||1 AS INTEGER) <> 0) AND harga >= 0) NOT NULL DEFAULT 0,
         stok INTEGER CHECK ((CAST(stok||1 AS INTEGER) <> 0) AND stok >= 0) NOT NULL DEFAULT 0,
+        terjual INTEGER CHECK ((CAST(terjual||1 AS INTEGER) <> 0) AND terjual >= 0) NOT NULL DEFAULT 0,
         gambar TEXT NOT NULL,
         created_at DATETIME,
         updated_at DATETIME

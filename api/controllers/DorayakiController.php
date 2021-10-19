@@ -107,7 +107,7 @@ class DorayakiController implements Controller {
             $this->dbConnection->beginTransaction();
             $inputDorayaki = ["nama" => $this->requestBody["nama"], 
                 "deskripsi" => $this->requestBody["deskripsi"], "harga" => $this->requestBody["harga"],
-                "stok" => $this->requestBody["stok"],"gambar" => "/api/static/images/dorayakis/".$cleanFileName];
+                "stok" => $this->requestBody["stok"],"gambar" => "/api/static/images/dorayakis/".$cleanFileName, "terjual" => 0];
 
             $this->dorayakiGateway->insert($inputDorayaki);
 
@@ -181,12 +181,18 @@ class DorayakiController implements Controller {
         $harga = $this->requestBody["harga"];
         $stok = $this->requestBody["stok"];
         $gambar =  $cleanFileName;
+        if($stok-$currDorayaki[0]["stok"] < 0 && !$_COOKIE["is_admin"])
+             $terjual = $currDorayaki[0]["stok"]-$stok;
+        else $terjual = null;
 
-        $inputPayload = ["nama" => $nama, "deskripsi" => $deskripsi, "harga" => $harga, "stok" => $stok, "gambar" => $gambar];
+        $inputPayload = ["nama" => $nama, "deskripsi" => $deskripsi, "harga" => $harga, "stok" => $stok, "gambar" => $gambar, "terjual" => $terjual];
         $updatePayload = $this->dorayakiGateway->findById($this->dorayakiId)[0];
         foreach($inputPayload as $key => $value) {
             if($key == "gambar") $updatePayload["gambar"]= "/api/static/images/dorayakis/".$inputPayload["gambar"];
-            else $updatePayload[$key] = $value;
+            else if($inputPayload[$key]) {
+                if($key == "terjual") $updatePayload[$key] += $value;
+                else $updatePayload[$key] = $value;
+            }
         }
         unset($updatePayload["created_at"]);
         unset($updatePayload["updated_at"]);
