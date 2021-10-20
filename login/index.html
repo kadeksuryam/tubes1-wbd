@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/login/login_signup.css">
+    <script src="/login/index.js" defer></script>
+    <title>Login | Stand with Dorayaki</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Stand with Dorayaki</h1>
+        <form class="form_input" enctype="multipart/form-data" method="post" name="login-form">
+            <div class="input_field">
+                <input type="text" placeholder="Username" name="username" required>
+            </div>
+            <div class="input_field">
+                <input type="password" placeholder="Password" name="password" id="password" required>
+            </div>
+            <div class="notification" id="error-login"> </div>
+            <button type="submit" name="login">Login</button>
+        </form>
+        <div class="problem">
+            <a href="../signup/index.html"><span>Belum punya akun?</span></a>
+        </div>
+    </div>
+</body>
+</html>
