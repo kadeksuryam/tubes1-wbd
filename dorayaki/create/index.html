@@ -4,20 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        currPath = window.location.pathname;
-        if(currPath[currPath.length-1] !== '/') {
-            window.location.href = currPath + '/';
-        }
-    </script>
-    <script src="index.js" defer></script>
-    <link rel="stylesheet" href="index.css"> 
+    <script src="/utils/util.js" defer></script>
+    <script src="/dorayaki/create/index.js" defer></script>
+    <link rel="stylesheet" href="/dorayaki/create/index.css"> 
     <title>Create Dorayaki</title>
 </head>
 <body>
     <div class="nav-bar">
-        <a class="nav-bar-item" href="/index.html">Dashboard</a>
-        <a class="nav-bar-item" href="/logout.html">Logout</a>
+        <a class="nav-bar-item" href="/dashboard">Dashboard</a>
+        <a class="nav-bar-item" href="/logout">Logout</a>
     </div>
     <div class="create-dorayaki-container">
         <h1>Create Dorayaki</h1>

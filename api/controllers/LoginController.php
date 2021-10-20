@@ -70,7 +70,7 @@ class LoginController implements Controller {
                 $response["body"] = ["message" => "successfully logged in"];
 
                 setcookie("user_id", $input["user_id"], time() + 86400, "/");
-                setcookie("session_id", $input["session_id"], time() + 86400, "/");
+                setcookie("session_id", $input["session_id"], time() + 86400, "/", "", false, true);
                 setcookie("is_admin", $input["is_admin"], time() + 86400, "/");
             }
             else {

@@ -78,7 +78,7 @@ class RegisterController implements Controller {
             $this->dbConnection->commit();
 
             setcookie("user_id", $inputSession["user_id"], time() + 86400, "/");
-            setcookie("session_id", $inputSession["session_id"], time() + 86400, "/");
+            setcookie("session_id", $inputSession["session_id"], time() + 86400, "/", "", false, true);
             setcookie("is_admin", $inputSession["is_admin"], time() + 86400, "/");
 
             $response["status_code_header"] = "HTTP/1.1 200 OK";

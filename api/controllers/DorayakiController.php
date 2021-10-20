@@ -175,7 +175,6 @@ class DorayakiController implements Controller {
             echo json_encode(["message" => $e->getMessage()]);
             exit();
         }
-
         $nama = $this->requestBody["nama"];
         $deskripsi = $this->requestBody["deskripsi"];
         $harga = $this->requestBody["harga"];
@@ -189,7 +188,7 @@ class DorayakiController implements Controller {
         $updatePayload = $this->dorayakiGateway->findById($this->dorayakiId)[0];
         foreach($inputPayload as $key => $value) {
             if($key == "gambar") $updatePayload["gambar"]= "/api/static/images/dorayakis/".$inputPayload["gambar"];
-            else if($inputPayload[$key]) {
+            else if(isset($inputPayload[$key])) {
                 if($key == "terjual") $updatePayload[$key] += $value;
                 else $updatePayload[$key] = $value;
             }
@@ -198,7 +197,6 @@ class DorayakiController implements Controller {
         unset($updatePayload["updated_at"]);
 
         $this->validateUpdatePayload($inputPayload);
-
         try {
             $this->dbConnection->beginTransaction();
 

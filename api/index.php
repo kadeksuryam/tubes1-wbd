@@ -59,6 +59,14 @@ if($uri[1] == "api") {
                 }
             }
             break;
+        case "logout":
+            foreach($_COOKIE as $key => $val) {
+                unset($_COOKIE[$key]);
+                setcookie($key, "", time()-3600, "/");
+            }
+            header("HTTP/1.1 200 OK");
+            echo json_encode(["message" => "logout success"]);
+            exit();
         default:
             header("HTTP/1.1 404 Not Found");
             echo json_encode(["message" => "resources not found"]);
