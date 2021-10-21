@@ -81,9 +81,3 @@ body {
     cursor: pointer;
     background: rgb(52,92,55);
 }
-
-.pagenumber {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}

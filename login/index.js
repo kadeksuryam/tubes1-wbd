@@ -1,6 +1,6 @@
 const main = event => {
     xhrCookie = new XMLHttpRequest();
-    xhrCookie.open("GET", "/api/auth/verify-cookie", true);
+    xhrCookie.open("GET", "/api/auth/verify-cookie", false);
     xhrCookie.send(null);
     xhrCookie.onreadystatechange = function() {
         if(xhrCookie.readyState === 4) {

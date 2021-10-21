@@ -20,6 +20,8 @@ class DorayakiController implements Controller {
     private $requestMethod;
     private $requestBody;
     private $dbConnection;
+    private $dashboardGateway;
+    private $searchGateway;
 
     public function __construct($dorayakiId)
     {
@@ -35,6 +37,8 @@ class DorayakiController implements Controller {
         $this->dorayakiActivityGateway = new DorayakiActivityGateway();
         $this->userGateway = new UserGateway();
         $this->pembelianDorayakiGateway = new PembelianDorayakiGateway();
+        $this->dashboardGateway = new DashboardGateway();
+        $this->searchGateway = new SearchGateway();
     }
 
     public function processRequest()
@@ -43,6 +47,7 @@ class DorayakiController implements Controller {
             case "GET":
                 if(isset($this->dorayakiId))
                     $this->getDorayaki();
+                else $this->getAllDorayaki();
                 break;
             case "POST":
                 if($_GET["type"] == "update") {
@@ -81,6 +86,90 @@ class DorayakiController implements Controller {
             exit();
         }
     }
+
+    private function getAllDorayaki() {
+
+        $page_num = 1;
+        try {
+            if(isset($_GET["page"]) && $_GET["page"]["size"] != 0) { 
+                $page_num = $_GET["page"];
+            }
+        } catch(\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
+
+        $size = 9;
+        try {
+            if(isset($_GET["size"]) && $_GET["size"]["size"] != 0) { 
+                $size = $_GET["size"];
+            }
+        } catch(\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
+
+        try {
+            $result = $this->dorayakiGateway->findAllDorayaki($page_num, $size);
+
+            if(!isset($result)) {
+                header("HTTP/1.1 404 Not Found");
+                echo json_encode(["message" => "There's no Dorayaki"]);
+                exit();
+            }
+
+            header("HTTP/1.1 200 OK");
+            echo json_encode($result);
+        } catch(\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
+    }
+
+    private function getDorayakiByName() {
+        $page_num = 1;
+        try {
+            if(isset($_GET["page"]) && $_GET["page"]["size"] != 0) { 
+                $page_num = $_GET["page"];
+            }
+        } catch(\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
+
+        $size = 9;
+        try {
+            if(isset($_GET["size"]) && $_GET["size"]["size"] != 0) { 
+                $size = $_GET["size"];
+            }
+        } catch(\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
+
+        try {
+            $result = $this->dorayakiGateway->findDorayakiByName($page_num, $size);
+
+            if(!isset($result)) {
+                header("HTTP/1.1 404 Not Found");
+                echo json_encode(["message" => `Dorayaki with name {$name} not found`]);
+                exit();
+            }
+
+            header("HTTP/1.1 200 OK");
+            echo json_encode($result);
+        } catch(\Exception $e) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo json_encode(["message" => $e->getMessage()]);
+            exit();
+        }
+    }
+
 
     private function createNewDorayaki() {
         $cleanFileName = "";

@@ -1,4 +1,4 @@
-const displayDorayakiDashboard = (arrayOfDorayaki, dorayakiPerPage) => {
+const displayDorayakiSearch = (arrayOfDorayaki, dorayakiPerPage) => {
     let cardDorayaki = "";
     for (let i = 0; i <= dorayakiPerPage; i++) {
         cardDorayaki += `
@@ -10,7 +10,7 @@ const displayDorayakiDashboard = (arrayOfDorayaki, dorayakiPerPage) => {
                 <h5>${arrayOfDorayaki[i].nama}</h5>
             </div>
             <div class="card-btn">
-                <a href="/detail?id=${chocolateArray[i].id}" class="btn btn-primary">Detail</a>
+                <a href="/detail/id=${chocolateArray[i].id}" class="btn btn-primary">Detail</a>
             </div>
         </div>
         `;
@@ -19,9 +19,10 @@ const displayDorayakiDashboard = (arrayOfDorayaki, dorayakiPerPage) => {
 }
 
 const navigation = (num_page, current_page) => {
-    const pagination_element = document.getElementById('pagination');
     for (let i = 1; i <= num_page; i++) {
-        co
+        if (i = current_page) {
+            // print semua nomor halaman
+        }
     }
 }
 
@@ -29,7 +30,7 @@ const getUser = () => {
     const userId = ('; '+document.cookie).split(`; user_id=`).pop().split(';')[0];
 
     let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/auth/user" + userId, false); // blom
+    xhr.open("GET", "/api/auth/user/" + userId, false); // blom
     xhr.send(null);
 
     xhr.onreadystatechange = function () {
@@ -44,6 +45,7 @@ const getUser = () => {
 
 const getAllDorayaki = (size) => {
     let currPage = new URLSearchParams(window.location.search).get("page");
+    if (currPage == null) {currPage = 1;}
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if(xhr.readyState === 4) {
@@ -53,7 +55,7 @@ const getAllDorayaki = (size) => {
                 const arrayOfPage = dataJson.page;
                 getUser();
                 displayDorayakiDashboard(arrayOfDorayaki, arrayOfPage[2]);
-                navigation(arrayOfPage[0], arrayOfPage[1]);
+                navigation(arrayOfPage[0], currPage);
             } else {
                 console.log(xhr.responseText);
             }
@@ -66,6 +68,7 @@ const getAllDorayaki = (size) => {
 
 const generateDorayaki = () => {
     xhr = new XMLHttpRequest();
+    //xhr.send(null);
     xhr.onreadystatechange = function() {
         if(xhr.readyState === 4) {
             if(xhr.status === 200) {
