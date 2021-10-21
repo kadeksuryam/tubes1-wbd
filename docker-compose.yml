@@ -4,8 +4,6 @@ services:
     build: .
     ports:
       - "80:80"
-    environment:
-      PHP_ENV: production
     volumes:
       - .:/code
   sqlite3:

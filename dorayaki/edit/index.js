@@ -1,5 +1,4 @@
 function main() {
-    console.log("test-edit");
     xhrCookie = new XMLHttpRequest();
     xhrCookie.open("GET", "/api/auth/verify-cookie", true);
     xhrCookie.send(null);
@@ -15,12 +14,12 @@ function main() {
             }
         }
     }
-    let form = document.forms.namedItem("edit-dorayaki");
-    let currPath = window.location.pathname;
-    let parsePath = currPath.split("/");
-    let dorayakiId = parsePath[3];
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    const dorayakiId = params["id"];
     if(isNaN(parseInt(dorayakiId))) window.location.href = "/notfound"
 
+    let form = document.forms.namedItem("edit-dorayaki");
     let reqDorayaki = new XMLHttpRequest();
     reqDorayaki.open("GET", "/api/dorayakis/" + dorayakiId, true);
     reqDorayaki.send(null);

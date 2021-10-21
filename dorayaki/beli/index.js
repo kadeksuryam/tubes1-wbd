@@ -1,7 +1,7 @@
 function main() {
-    let currPath = window.location.pathname;
-    let parsePath = currPath.split("/");
-    let dorayakiId = parsePath[3];
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    const dorayakiId = params["id"];
     if(isNaN(parseInt(dorayakiId))) window.location.href = "/notfound"
 
     xhrCookie = new XMLHttpRequest();
@@ -27,7 +27,6 @@ function main() {
         }
         else if(xhrDorayaki.status === 200) {
             let dorayakiData = JSON.parse(xhrDorayaki.response);
-            console.log(dorayakiData);
             initField(dorayakiData);
             let changeStokButton = document.getElementById("change-stok-button");
             changeStokButton.addEventListener("click", function() {
