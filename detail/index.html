@@ -3,34 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/detail/detail.css">
+    <link rel="stylesheet" href="/header/index.css">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="/header/index.js" defer></script>
+    <script src="/detail/detail.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <div class="card-img">
-                <img src="" id="dorayaki-img">
-            </div>
-            <div class="card-body">
-                <h5 id="dorayaki-name"></h5>
-                Price: <h4 id="dorayaki-price"></h4>
-                Sold: <h4 id="dorayaki-sold"></h4>
-                Stock: <h4 id="dorayaki-stock"></h4>
-                <p id="dorayaki-description"></p>
-            </div>
-            <div class="card-btn">
-                <a href="" id="btn-buy" class="btn btn-primary">Buy</a>
-            </div>
-            <div class="card-btn" id="btn-edit">
-                <a href="" class="btn btn-primary">Edit</a>
-            </div>
-            <div class="card-btn" id="btn-delete">
-                <a href="" class="btn btn-primary">Delete</a>
+    <div id="header-container"></div>
+    <div class="main-container">
+        <div class="container">
+            <div class="card">
+                <div class="card-img">
+                    <img src="" id="dorayaki-img">
+                </div>
+                <div class="card-body">
+                    <h5 id="dorayaki-name"></h5>
+                    Price: <h4 id="dorayaki-price"></h4>
+                    Sold: <h4 id="dorayaki-sold"></h4>
+                    Stock: <h4 id="dorayaki-stock"></h4>
+                    <p id="dorayaki-description"></p>
+                </div>
+                <div class="card-btn">
+                    <a href="" id="btn-buy" class="btn btn-primary">Buy</a>
+                </div>
+                <div class="card-btn" id="btn-edit">
+                    <a href="" class="btn btn-primary">Edit</a>
+                </div>
+                <div class="card-btn" id="btn-delete">
+                    <a href="" class="btn btn-primary">Delete</a>
+                </div>
             </div>
         </div>
     </div>
-    <script src="/detail/detail.js"></script>
+    
 </body>
 </html>

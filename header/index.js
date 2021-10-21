@@ -1,9 +1,10 @@
 const createHeader = (is_admin) => {
+    const query_url = new URL(window.location.href).searchParams;
 
     return `
     <nav class="header">
         <div class="header__link__all">
-            <a class="header__link" href="/dashboard/dashboard">
+            <a class="header__link" href="/dashboard">
                 <span class="link__hover"> Home </span>
             </a>
             <a class="header__link" href="${!is_admin ? "/history" : "/dorayaki/create"}">
@@ -14,13 +15,13 @@ const createHeader = (is_admin) => {
         <div class="header__search">
             <form action="/search" method="GET" class="header__form__search">
                 <input class="header__search" type="text" placeholder="Find dorayaki" name="input_query" value="${
-                    query2.get("query_input") || ""
+                    query_url.get("query_input") || ""
                 }" />
             </form>
         </div>
 
         <div class="header__logout">
-            <a class="header__link" href="#" onclick="logout">
+            <a class="header__link" href="/logout" onclick="logout">
                 <span class="link__hover"> Logout </span>
             </a>
         </div>
@@ -49,3 +50,4 @@ const main = (event) => {
     xhr.open("GET", "/api/dorayakis"); //blom
     xhr.send();
 }
+main();

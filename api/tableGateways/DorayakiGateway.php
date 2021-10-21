@@ -98,4 +98,62 @@ class DorayakiGateway {
         return $stmt->rowCount();
         
     }
+
+    public function findAllDorayaki($page, $size)
+    {
+        
+        $stmt_count_all = <<<EOS
+            SELECT * FROM dorayakis
+        EOS;
+    
+        $stmt_count_all = $this->dbConnection->query($stmt_count_all);
+        $count_all = count($stmt_count_all->fetchAll(\PDO::FETCH_ASSOC));
+        $num_page = ceil($count_all/$size);
+        $start = $size * ($page - 1);
+
+        $stmt = <<<EOS
+            SELECT * FROM dorayakis ORDER BY terjual DESC LIMIT :size OFFSET :start
+        EOS;
+
+        $stmt = $this->dbConnection->prepare($stmt);
+        $stmt->execute(array(
+            "size" => $size,
+            "start" => $start
+        ));
+        $allDorayakiPage = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $dorayakiPerPage = count($allDorayakiPage);
+        $retPage = [$num_page, $dorayakiPerPage];
+        $result = ["page" => $retPage, "payload" => $allDorayakiPage];
+        return $result;
+    }
+
+    public function findDorayakiByName($query_input, $page, $size)
+    {
+        $query_name = "%{$query_input}%";
+
+        $stmt_count_all = <<<EOS
+            SELECT * FROM dorayakis
+        EOS;
+    
+        $stmt_count_all = $this->dbConnection->query($stmt_count_all);
+        $count_all = count($stmt_count_all->fetchAll(\PDO::FETCH_ASSOC));
+        $num_page = ceil($count_all/$size);
+        $start = $size * ($page - 1);
+
+        $stmt = <<<EOS
+            SELECT * FROM dorayakis WHERE LOWER(nama) LIKE LOWER(:query_name) ORDER BY terjual DESC LIMIT :size OFFSET :start
+        EOS;
+
+        $stmt = $this->dbConnection->prepare($stmt);
+        $stmt->execute(array(
+            "query_name" => $query_name,
+            "size" => $size,
+            "start" => $start
+        ));
+        $allDorayakiPage = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $dorayakiPerPage = count($allDorayakiPage);
+        $retPage = [$num_page, $dorayakiPerPage];
+        $result = ["page" => $retPage, "payload" => $allDorayakiPage];
+        return $result;
+    }
 }
