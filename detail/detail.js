@@ -20,13 +20,13 @@ const detail = dorayakiId => {
 
     if (admin == 1) {
         document.getElementById("btn-buy").innerHTML = "Change Stock";
-        document.getElementById("btn-buy").href = `/stock?id=${dorayakiId}`;
+        document.getElementById("btn-buy").href = `/dorayaki/beli?id=${dorayakiId}`;
         document.getElementById("btn-edit").href = `/edit?id=${dorayakiId}`;
         document.getElementById("btn-delete").href = `/delete?id=${dorayakiId}`;
 
     } else {
         document.getElementById("btn-buy").innerHTML = "Buy Now";
-        document.getElementById("btn-buy").href = `/buy?id=${dorayakiId}`;
+        document.getElementById("btn-buy").href = `/dorayaki/beli?id=${dorayakiId}`;
         document.getElementById("btn-edit").style.visibility = 'hidden';
         document.getElementById("btn-delete").style.visibility = 'hidden';
     }

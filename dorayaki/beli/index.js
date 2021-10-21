@@ -57,7 +57,8 @@ function main() {
                                     document.getElementById("gambar").src = dorayakiData.gambar;
                                     document.getElementById("nama").innerText = dorayakiData.nama;
                                     document.getElementById("stok").innerText = `Stok sekararang: ${dorayakiData.stok}`;
-                                    document.getElementById("delta-stok").value = 0;
+                                    document.getElementById("total-harga").innerText = `Total harga: ${dorayakiData.harga}`;
+                                    document.getElementById("delta-stok").value = 1;
                                 }
                             }
                             if(isAdmin == 0) notifEl.innerHTML = "<p style='color:green'>Dorayaki berhasil dibeli</p>";
@@ -71,9 +72,18 @@ function main() {
                 setTimeout(function() {
                     notifEl.innerHTML = "";
                 }, 2000);
-            })
+            });
+            if(isAdmin == 0) {
+                const deltaStok = document.getElementById("delta-stok");
+                deltaStok.addEventListener('change', function(){
+                    const totalHargaEl = document.getElementById("total-harga");
+                    const totalHarga = parseInt(deltaStok.value)*parseInt(dorayakiData["harga"]);
+                    totalHargaEl.innerHTML = `<p>Total harga: ${totalHarga}`;
+                })
+            }
         }
     }
+
 }
 
 function initField(dorayakiData) {
@@ -101,6 +111,7 @@ function initField(dorayakiData) {
             <div class="card-container">
                 <h4><b id="nama">${dorayakiData.nama}</b></h4>
                 <p id="stok">Stok sekararang: ${dorayakiData.stok}</p>
+                <p id="total-harga">Total harga: ${dorayakiData.harga}</p>
                 <label for="delta-stok">Jumlah Pembelian:</label>
                 <input type="number" id="delta-stok" name="stok" min="1" value="1" placeholder="Jumlah pembelian"><br/>
                 <button id="change-stok-button">Beli Dorayaki</button>

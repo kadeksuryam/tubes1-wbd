@@ -303,8 +303,10 @@ class DorayakiController implements Controller {
             $this->dbConnection->beginTransaction();
 
             $this->dorayakiGateway->update($this->dorayakiId, $updatePayload);
+            $currUserDetail = $this->userGateway->find($_COOKIE["user_id"]);
             $riwayatPembelian = ["dorayakiId" => $currDorayaki[0]["id"], "dorayakiNama" => $currDorayaki[0]["nama"],
-                "dorayakiHarga" => $currDorayaki[0]["harga"], "userId" => $_COOKIE["user_id"], "jumlah" => $stok-$currDorayaki[0]["stok"]];
+                "dorayakiHarga" => $currDorayaki[0]["harga"], "userId" => $_COOKIE["user_id"], "username" => $currUserDetail[0]["username"],
+                "jumlah" => $stok-$currDorayaki[0]["stok"]];
             $this->pembelianDorayakiGateway->insert($riwayatPembelian);
             $this->dbConnection->commit();
 

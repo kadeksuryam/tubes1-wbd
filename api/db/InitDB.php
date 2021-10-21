@@ -122,6 +122,7 @@ $stmtCreatePembelianDorayakiTable = <<<EOS
         dorayaki_nama VARCHAR(256) NOT NULL,
         dorayaki_harga VARCHAR(256) NOT NULL,
         user_id INTEGER NOT NULL,
+        username VARCHAR(256) NOT NULL,
         jumlah INTEGER NOT NULL,
         created_at DATETIME,
         updated_at DATETIME

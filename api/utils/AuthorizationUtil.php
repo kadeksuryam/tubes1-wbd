@@ -42,6 +42,17 @@ class AuthorizationUtil {
                         $this->forbiddenResponse();
                         break;
                 }
+                break;
+            case "riwayat":
+                if($this->isAdmin) break;
+                if($uri[3] == "dorayaki") {
+                    switch($requestMethod) {
+                        case "GET":
+                            if($_GET["user_id"] !== $_COOKIE["user_id"])
+                                $this->forbiddenResponse();
+                            break;
+                    }
+                }
         }
     }
 
