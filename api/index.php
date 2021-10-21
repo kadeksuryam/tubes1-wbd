@@ -76,8 +76,11 @@ if($uri[1] == "api") {
     $controller->processRequest();
 }
 else {
-    echo $_SERVER['REQUEST_URI'];
-    echo file_get_contents($_SERVER['REQUEST_URI']);
+    // echo $_SERVER['REQUEST_URI'];
+    $uriGet = "/".$uri[1]."/".$uri[2]; 
+    if(!file_get_contents($uriGet)) echo "failed";
+    // echo $uriGet;
+    echo file_get_contents($uriGet);
 }
 
 function verifyCookie($authenticationUtil) {

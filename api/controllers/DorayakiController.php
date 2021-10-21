@@ -20,8 +20,8 @@ class DorayakiController implements Controller {
     private $requestMethod;
     private $requestBody;
     private $dbConnection;
-    private $dashboardGateway;
-    private $searchGateway;
+    // private $dashboardGateway;
+    // private $searchGateway;
 
     public function __construct($dorayakiId)
     {
@@ -37,8 +37,8 @@ class DorayakiController implements Controller {
         $this->dorayakiActivityGateway = new DorayakiActivityGateway();
         $this->userGateway = new UserGateway();
         $this->pembelianDorayakiGateway = new PembelianDorayakiGateway();
-        $this->dashboardGateway = new DashboardGateway();
-        $this->searchGateway = new SearchGateway();
+        // $this->dashboardGateway = new DashboardGateway();
+        // $this->searchGateway = new SearchGateway();
     }
 
     public function processRequest()
@@ -88,7 +88,6 @@ class DorayakiController implements Controller {
     }
 
     private function getAllDorayaki() {
-
         $page_num = 1;
         try {
             if(isset($_GET["page"]) && $_GET["page"]["size"] != 0) { 
@@ -245,6 +244,7 @@ class DorayakiController implements Controller {
             if(count($this->requestBody) != 1 || 
                 !array_key_exists("stok", $this->requestBody) ||
                 $this->requestBody["stok"] > $currDorayaki[0]["stok"]) {
+            
                 $this->forbiddenRequestResponse("admin only operation");
             }
         }
@@ -276,8 +276,12 @@ class DorayakiController implements Controller {
         $inputPayload = ["nama" => $nama, "deskripsi" => $deskripsi, "harga" => $harga, "stok" => $stok, "gambar" => $gambar, "terjual" => $terjual];
         $updatePayload = $this->dorayakiGateway->findById($this->dorayakiId)[0];
         foreach($inputPayload as $key => $value) {
-            if($key == "gambar") $updatePayload["gambar"]= "/api/static/images/dorayakis/".$inputPayload["gambar"];
-            else if(isset($inputPayload[$key])) {
+            if($key == "gambar") {
+                if(isset($inputPayload[$key])) {
+                    $updatePayload["gambar"]= "/api/static/images/dorayakis/".$inputPayload["gambar"];
+                }
+            }
+            else if(isset($inputPayload[$key]) && strlen($inputPayload[$key]) != 0) {
                 if($key == "terjual") $updatePayload[$key] += $value;
                 else $updatePayload[$key] = $value;
             }
@@ -385,25 +389,25 @@ class DorayakiController implements Controller {
 
         $errorMsg = [];
         
-        if(!isset($nama) || strlen($nama) == 0) {
-            array_push($errorMsg, ["nama" => "field 'nama' can't be empty"]);
-        }
-        if(!isset($harga) || strlen($harga) == 0) {
-            array_push($errorMsg, ["harga" => "field 'harga' can't be empty"]);
-        }
+        // if(!isset($nama) || strlen($nama) == 0) {
+        //     array_push($errorMsg, ["nama" => "field 'nama' can't be empty"]);
+        // }
+        // if(!isset($harga) || strlen($harga) == 0) {
+        //     array_push($errorMsg, ["harga" => "field 'harga' can't be empty"]);
+        // }
         if((int)$harga < 0) {
             array_push($errorMsg, ["harga" => "harga can't be negative"]);
         }
 
-        if(!isset($stok) || strlen($stok) == 0) {
-            array_push($errorMsg, ["stok" => "field 'stok' can't be empty"]);
-        }
+        // if(!isset($stok) || strlen($stok) == 0) {
+        //     array_push($errorMsg, ["stok" => "field 'stok' can't be empty"]);
+        // }
         if((int)$stok< 0) {
             array_push($errorMsg, ["stok" => "stok can't be negative"]);
         }
-        if(!isset($deskripsi) || strlen($deskripsi) == 0) {
-            array_push($errorMsg, ["deskripsi" => "field 'deskripsi' can't be empty"]);
-        }
+        // if(!isset($deskripsi) || strlen($deskripsi) == 0) {
+        //     array_push($errorMsg, ["deskripsi" => "field 'deskripsi' can't be empty"]);
+        // }
         if(!empty($errorMsg)) $this->badRequestResponse($errorMsg);
     }
 

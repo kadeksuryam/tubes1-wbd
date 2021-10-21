@@ -35,7 +35,8 @@ class AuthorizationUtil {
                 if($this->isAdmin) break;
                 switch($requestMethod) {
                     case "POST":
-                        $this->forbiddenResponse();
+                        if($_GET["type"] !== "update")
+                            $this->forbiddenResponse();
                         break;
                     case "DELETE":
                         $this->forbiddenResponse();

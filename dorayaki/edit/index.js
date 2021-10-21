@@ -1,4 +1,5 @@
 function main() {
+    console.log("test-edit");
     xhrCookie = new XMLHttpRequest();
     xhrCookie.open("GET", "/api/auth/verify-cookie", true);
     xhrCookie.send(null);
