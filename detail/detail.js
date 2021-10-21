@@ -11,9 +11,9 @@ const detail = dorayakiId => {
     let dorayakiData = JSON.parse(xhr.response);
     document.getElementById("dorayaki-name").innerHTML = dorayakiData.nama;
     document.getElementById("dorayaki-img").src = dorayakiData.gambar;
-    document.getElementById("dorayaki-price").innerHTML = dorayakiData.harga;
-    document.getElementById("dorayaki-sold").innerHTML = dorayakiData.terjual;
-    document.getElementById("dorayaki-stock").innerHTML = dorayakiData.stok;
+    document.getElementById("dorayaki-price").innerHTML = `Price : ${dorayakiData.harga}`;
+    document.getElementById("dorayaki-sold").innerHTML = `Sold : ${dorayakiData.terjual}`;
+    document.getElementById("dorayaki-stock").innerHTML = `Stock : ${dorayakiData.stok}`;
     document.getElementById("dorayaki-description").innerHTML = dorayakiData.deskripsi;
 
     let admin = ('; '+document.cookie).split(`; is_admin=`).pop().split(';')[0];

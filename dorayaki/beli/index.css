@@ -40,19 +40,19 @@ button {
     appearance:none;
     -webkit-appearance:none;
     font-weight: 600;
-    background-color:#6f7cb9;
+    background-color:rgb(52,92,55);
     color:#fff;
     cursor: pointer;
     box-shadow: 0 6px #999;
 }
 
 button:hover {
-    background-color: #858fb9;
+    background-color: green;
 }
 
 button:active {
-    background-color: #858fb9;
-    box-shadow: 0 2px #666;
+    background-color: rgb(52,92,55);
+    box-shadow: 0 2px green;
     transform: translateY(4px);
 }
 

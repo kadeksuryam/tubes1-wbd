@@ -37,15 +37,15 @@ class AuthenticationUtil {
     public function isCookieStillValid() {
         if($this->isCookieMalformed()) return false;
 
-        $dbUpdatedAt = $this->dbUserSession[0]["updated_at"];
+        // $dbUpdatedAt = $this->dbUserSession[0]["updated_at"];
 
-        $currDate = new DateTime(date("Y-m-d H:i:s"));
-        $dbDate = new DateTime($dbUpdatedAt);
+        // $currDate = new DateTime(date("Y-m-d H:i:s"));
+        // $dbDate = new DateTime($dbUpdatedAt);
 
-        $diffDate = $currDate->getTimestamp() - $dbDate->getTimestamp();
+        // $diffDate = $currDate->getTimestamp() - $dbDate->getTimestamp();
 
-        //session life time: 1 hour
-        if($diffDate > 3600) return false;
+        // //session life time: 1 hour
+        // if($diffDate > 3600) return false;
 
         return true;
     }

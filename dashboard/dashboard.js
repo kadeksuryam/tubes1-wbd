@@ -4,16 +4,22 @@ const displayDorayakiDashboard = (arrayOfDorayaki, dorayakiPerPage) => {
     for (let i = 0; i < dorayakiPerPage; i++) {
         cardDorayaki += `
         <div class="card">
-            <div class="card-img">
-                <img src="${arrayOfDorayaki[i].gambar}"/>
-            </div>
-            <div class="card-body">
-                <h5>${arrayOfDorayaki[i].nama}</h5>
-            </div>
-            <div class="card-btn">
-                <a href="/detail?id=${arrayOfDorayaki[i].id}" class="btn btn-primary">Detail</a>
-            </div>
+            <a href="/detail?id=${arrayOfDorayaki[i].id}">
+                <div class="card-img">
+                    <img src="${arrayOfDorayaki[i].gambar}"/>
+                </div>
+                <div class="card-body">
+                    <h5>${arrayOfDorayaki[i].nama}</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Sold : ${arrayOfDorayaki[i].terjual}</h6>
+                </div>
+                <div class="card-body">
+                    <p>Rp${arrayOfDorayaki[i].harga}</p>
+                </div>
+            </a>
         </div>
+        
         `;
     }
     document.getElementById('dorayaki_dashboard').innerHTML = cardDorayaki;
@@ -70,7 +76,10 @@ const getAllDorayaki = (size) => {
                 const arrayOfPage = dataJson.page;
                 getUser();
                 displayDorayakiDashboard(arrayOfDorayaki, arrayOfPage[1]);
-                navigation(arrayOfPage[0], currPage, size);
+                if (arrayOfDorayaki[0] > 1) {
+                    navigation(arrayOfPage[0], currPage, size);
+                }
+                
             } else {
                 window.location.replace("/login");
             }
