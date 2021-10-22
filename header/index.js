@@ -29,7 +29,7 @@ const createHeader = (is_admin) => {
     `;
 }
 
-const main = (event) => {
+const mainHeader = (event) => {
     let xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = function () {
@@ -66,4 +66,4 @@ function getCookie(cname) {
     return "";
 }
 
-main();
+mainHeader();

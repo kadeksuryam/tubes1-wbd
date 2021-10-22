@@ -4,6 +4,7 @@ body {
     display: flex;
     flex-direction: column;
     background-color: rgb(52,92,55);
+    font-family: Arial, Helvetica, Helvetica, sans-serif;
 }
 
 .main-container {
