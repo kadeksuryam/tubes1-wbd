@@ -2,7 +2,7 @@
 
 use API\Controllers\UserController;
 use API\DB\Database;
-//error_reporting(0);
+error_reporting(0);
 require_once("./controllers/UserController.php");
 require_once("./controllers/LoginController.php");
 require_once("./controllers/RegisterController.php");

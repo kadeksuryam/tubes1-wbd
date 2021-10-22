@@ -7,7 +7,7 @@ const createHeader = (is_admin) => {
             <a class="header__link" href="/dashboard">
                 <span class="link__hover"> Home </span>
             </a>
-            <a class="header__link" href="${!is_admin ? "/history" : "/dorayaki/create"}">
+            <a class="header__link" href="${!is_admin ? `/riwayat/pembelian?user_id=${getCookie("user_id")}` : "/dorayaki/create"}">
                 <span class="link__hover"> ${!is_admin ? "History" : "Add Dorayaki"} </span>
             </a>
         </div>
@@ -50,4 +50,20 @@ const main = (event) => {
     xhr.open("GET", "/api/dorayakis"); //blom
     xhr.send();
 }
+
+function getCookie(cname) {
+    let name = cname + "=";
+    let ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+}
+
 main();

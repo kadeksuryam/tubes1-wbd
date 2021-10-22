@@ -19,10 +19,28 @@ const detail = dorayakiId => {
     let admin = ('; '+document.cookie).split(`; is_admin=`).pop().split(';')[0];
 
     if (admin == 1) {
+        const deleteButton =  document.getElementById("btn-delete");
         document.getElementById("btn-buy").innerHTML = "Change Stock";
         document.getElementById("btn-buy").href = `/dorayaki/beli?id=${dorayakiId}`;
-        document.getElementById("btn-edit").href = `/edit?id=${dorayakiId}`;
-        document.getElementById("btn-delete").href = `/delete?id=${dorayakiId}`;
+        document.getElementById("btn-edit").href = ``;
+        //deleteButton.href = `/dorayaki/delete?id=${dorayakiId}`;
+
+        deleteButton.addEventListener("click", function() {
+            if (confirm('Are you sure you want to delete this dorayaki?')) {
+                let xhr = new XMLHttpRequest();
+                xhr.open("DELETE", `/api/dorayakis/` + dorayakiId, true);
+                xhr.send(null);
+                xhr.onreadystatechange = function() {
+                    if(xhr.readyState === 4) {
+                        if(xhr.status === 200) {
+                            window.location.href = "/dashboard";
+                            return;
+                        }
+                        else alert(xhr.response.message);
+                    }
+                }
+            }
+        })
 
     } else {
         document.getElementById("btn-buy").innerHTML = "Buy Now";
