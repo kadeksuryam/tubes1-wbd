@@ -1,5 +1,5 @@
 ## Deskripsi
-TBD
+Aplikasi ini merupakan merupakan sebuah sistem informasi yang digunakan untuk melakukan manajemen / pengelolaan stok toko Stand With Dorayaki
 
 ## Requirement
 <a href="https://docs.docker.com/get-docker/" >Docker Engine</a> 
@@ -9,10 +9,10 @@ TBD
 
 ## Cara Menjalankan Server
 Jalankan command:
-`
+```
     docker-compose build --no-cache
     docker-compose up -d
-`
+```
 Selanjutnya, aplikasi dapat diakses pada alamat `localhost`
 
 
@@ -36,6 +36,6 @@ TBD
     - Register: 13519030
     - Create Dorayaki: 13519165, 13519030
     - Update Dorayaki: 13519165, 13519030
-    - Delete Dorayaki: 13519030
+    - Delete Dorayaki: 13519165
     - Read Dorayaki (Dashboard, Detail): 13519030
     - Read Riwayat: 13519165, 13519030
