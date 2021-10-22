@@ -8,10 +8,13 @@ TBD
 <a href="https://docs.docker.com/engine/install/u" >Instalasi docker </a>
 
 ## Cara Menjalankan Server
+Jalankan command:
 `
     docker-compose build --no-cache
     docker-compose up -d
 `
+Selanjutnya, aplikasi dapat diakses pada alamat `localhost`
+
 
 ## Screenshot
 TBD
