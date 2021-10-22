@@ -22,8 +22,7 @@ const detail = dorayakiId => {
         const deleteButton =  document.getElementById("btn-delete");
         document.getElementById("btn-buy").innerHTML = "Change Stock";
         document.getElementById("btn-buy").href = `/dorayaki/beli?id=${dorayakiId}`;
-        document.getElementById("btn-edit").href = ``;
-        //deleteButton.href = `/dorayaki/delete?id=${dorayakiId}`;
+        document.getElementById("btn-edit").href = `/dorayaki/edit?id=${dorayakiId}`;
 
         deleteButton.addEventListener("click", function() {
             if (confirm('Are you sure you want to delete this dorayaki?')) {
