@@ -76,7 +76,7 @@ const getAllDorayaki = (size) => {
                 const arrayOfPage = dataJson.page;
                 getUser();
                 displayDorayakiDashboard(arrayOfDorayaki, arrayOfPage[1]);
-                if (arrayOfDorayaki[0] > 1) {
+                if (arrayOfPage[0] > 1) {
                     navigation(arrayOfPage[0], currPage, size);
                 }
                 
